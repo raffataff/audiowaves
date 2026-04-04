@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectral Nexus - Audio Visualizer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script type="importmap">
+{
+  "imports": {
+    "@codemirror/view": "https://esm.sh/@codemirror/view@6.26.3?deps=@codemirror/state@6.4.1",
+    "@codemirror/state": "https://esm.sh/@codemirror/state@6.4.1",
+    "@codemirror/language": "https://esm.sh/@codemirror/language@6.10.1?deps=@codemirror/state@6.4.1,@codemirror/view@6.26.3",
+    "@codemirror/commands": "https://esm.sh/@codemirror/commands@6.5.0?deps=@codemirror/state@6.4.1,@codemirror/view@6.26.3,@codemirror/language@6.10.1",
+    "@codemirror/search": "https://esm.sh/@codemirror/search@6.5.6?deps=@codemirror/state@6.4.1,@codemirror/view@6.26.3",
+    "@codemirror/autocomplete": "https://esm.sh/@codemirror/autocomplete@6.16.0?deps=@codemirror/state@6.4.1,@codemirror/view@6.26.3,@codemirror/language@6.10.1,@lezer/common@1.2.1",
+    "@codemirror/lint": "https://esm.sh/@codemirror/lint@6.8.0?deps=@codemirror/state@6.4.1,@codemirror/view@6.26.3",
+    
+    "@codemirror/lang-cpp": "https://esm.sh/@codemirror/lang-cpp@6.0.2?deps=@codemirror/state@6.4.1,@codemirror/language@6.10.1,@lezer/common@1.2.1,@lezer/highlight@1.2.0,@lezer/cpp@1.1.2",
+    
+    "@lezer/common": "https://esm.sh/@lezer/common@1.2.1",
+    "@lezer/highlight": "https://esm.sh/@lezer/highlight@1.2.0?deps=@lezer/common@1.2.1",
+    "@lezer/lr": "https://esm.sh/@lezer/lr@1.4.0?deps=@lezer/common@1.2.1",
+    "@lezer/cpp": "https://esm.sh/@lezer/cpp@1.1.2?deps=@lezer/highlight@1.2.0,@lezer/common@1.2.1,@lezer/lr@1.4.0"
+  }
+}
+</script>
+  
+</head>
+<body>
+    <div id="app">
+        <!-- Main Canvas -->
+        <canvas id="visualizer-canvas"></canvas>
+        
+        <!-- UI Overlay -->
+        <div id="ui-overlay">
+            <!-- Top Controls Panel -->
+            <div id="top-panel" class="panel">
+                <div class="panel-header">
+                    <h1 class="app-title">Spectral Nexus</h1>
+                    <div class="window-controls">
+                        <button id="settings-btn" class="icon-btn" data-tooltip="Settings">⚙️</button>
+                        <button id="fullscreen-btn" class="icon-btn" data-tooltip="Toggle fullscreen">⛶</button>
+                    </div>
+                </div>
+                
+                <div class="controls-section">
+                    <!-- Audio Controls -->
+                    <div class="audio-controls">
+                        <button id="play-pause-btn" class="control-btn primary" data-tooltip="Play/Pause audio">▶️</button>
+                        <button id="prev-btn" class="control-btn" data-tooltip="Previous track">⏮️</button>
+                        <button id="next-btn" class="control-btn" data-tooltip="Next track">⏭️</button>
+                        <button id="shuffle-btn" class="control-btn" data-tooltip="Toggle shuffle mode">🔀</button>
+                        <button id="repeat-btn" class="control-btn" data-tooltip="Toggle repeat mode">🔁</button>
+                    </div>
+                    
+                    <!-- Volume & Progress -->
+                    <div class="progress-section">
+                        <div class="time-display">
+                            <span id="current-time">0:00</span>
+                            <div class="progress-container">
+                                <canvas id="waveform-bg" class="waveform-background"></canvas>
+                                <input type="range" id="progress-slider" class="progress-slider" min="0" max="100" value="0" data-tooltip="Seek position">
+                            </div>
+                            <span id="total-time">0:00</span>
+                        </div>
+                        
+                        <div class="volume-section">
+                            <button id="mute-btn" class="control-btn" data-tooltip="Mute/Unmute audio">🔊</button>
+                            <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="70" data-tooltip="Adjust volume">
+                            <div class="level-meter">
+                                <div id="level-bar" class="level-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Left Panel - Playlist -->
+            <div id="playlist-panel" class="panel side-panel left">
+                <div class="panel-header">
+                    <h3>Playlist</h3>
+                    <div class="current-track-display" id="current-track-display">
+                        <span class="current-track-icon">▶</span>
+                        <span class="current-track-title" id="current-track-title">No track playing</span>
+                    </div>
+                    <div class="panel-controls">
+                        <input type="file" id="file-input" multiple accept="audio/*" style="display: none;">
+                        <button id="add-files-btn" class="icon-btn" data-tooltip="Add audio files">📁</button>
+                        <button id="mic-input-btn" class="icon-btn" data-tooltip="Use microphone input">🎤</button>
+                        <button id="clear-playlist-btn" class="icon-btn" data-tooltip="Clear playlist">🗑️</button>
+                    </div>
+                </div>
+                <div class="playlist-content">
+                    <div id="playlist-items" class="playlist-items"></div>
+                    <div class="playlist-info">
+                        <span id="playlist-count">0 tracks</span>
+                        <span id="playlist-duration">0:00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Shader Editor (Initially Hidden) -->
+            <div id="editor-panel" class="panel side-panel right hidden">
+                <div class="panel-header">
+                    <h3>Shader Editor</h3>
+                    <div class="panel-controls">
+                        <button id="compile-btn" class="icon-btn" data-tooltip="Compile and test shader">▶️</button>
+                        <button id="close-editor-btn" class="icon-btn" data-tooltip="Close shader editor">✖️</button>
+                    </div>
+                </div>
+                <div class="editor-content">
+                    <div id="shader-editor"></div>
+                    <div id="error-console" class="error-console"></div>
+                </div>
+            </div>
+            
+            <!-- Bottom Panel - Shader Presets -->
+            <div id="presets-panel" class="panel bottom-panel">
+                <div class="panel-header">
+                    <h3>Visual Presets</h3>
+                    <div class="panel-controls">
+                        <button id="add-shader-btn" class="icon-btn" data-tooltip="Create new shader">➕</button>
+                        <button id="shuffle-shader-btn" class="icon-btn" data-tooltip="Toggle automatic shader switching" title="Shuffle is OFF - Click to enable">🎲</button>
+                        <button id="capture-thumbnail-btn" class="icon-btn" data-tooltip="Capture current visual as thumbnail">📸</button>
+                        <button id="edit-shader-btn" class="icon-btn" data-tooltip="Open shader editor">✏️</button>
+                        <button id="save-shader-btn" class="icon-btn" data-tooltip="Save shader changes">💾</button>
+                        <button id="randomize-btn" class="icon-btn" data-tooltip="Randomize current shader parameters">🔄</button>
+                        <button id="export-import-btn" class="icon-btn" data-tooltip="Export/Import shaders">📦</button>
+                    </div>
+                </div>
+                <div class="presets-content">
+                    <div id="preset-grid" class="preset-grid"></div>
+                    <div class="preset-params" id="preset-params"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Drop Zone Overlay -->
+        <div id="drop-zone" class="drop-zone hidden">
+            <div class="drop-content">
+                <h2>Drop Audio Files Here</h2>
+                <p>Supports MP3, WAV, FLAC, OGG</p>
+            </div>
+        </div>
+        
+        <!-- Performance Monitor -->
+        <div id="perf-monitor" class="perf-monitor">
+            <div class="perf-item">
+                <span>FPS:</span>
+                <span id="fps-counter">60</span>
+            </div>
+            <div class="perf-item">
+                <span>Quality:</span>
+                <span id="quality-indicator">100%</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="audio-player" crossorigin="anonymous"></audio>
+    <audio id="audio-player-next" crossorigin="anonymous"></audio>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <!-- Utils must load first for shared functions -->
+    <script src="utils.js"></script>
+    <script src="shaders/cosmic-flow.js"></script>
+    <script src="shaders/glitch-cathedral.js"></script>
+    <script src="shaders/liquid-chrome.js"></script>
+    <script src="shaders/neural-network.js"></script>
+    <script src="shaders/plasma-storm.js"></script>
+    <script src="shaders/geometric-tunnel.js"></script>
+    <script src="shaders.js"></script>
+    <script src="blend-shaders.js"></script>
+    <script src="audio-engine.js"></script>
+    <script src="shader-engine.js"></script>
+    <script src="playlist-manager.js"></script>
+    <script src="preset-storage.js"></script>
+    <script src="preset-renderer.js"></script>
+    <script src="thumbnail-capture.js"></script>
+    <script src="preset-notifications.js"></script>
+    <script src="shader-exporter.js"></script>
+    <script src="shader-palettes.js"></script>
+    <script src="shader-generator-effects.js"></script>
+    <script src="shader-generator-controls.js"></script>
+    <script src="shader-generator-ui.js"></script>
+    <script src="shader-generator-compiler.js"></script>
+    <script src="shader-generator.js"></script>
+    <script src="preset-transitions.js"></script>
+    <script src="preset-shuffle.js"></script>
+    <script src="preset-manager.js"></script>
+    <script src="audio-controls.js"></script>
+    <script src="shader-editor.js"></script>
+    <script src="ui-manager.js"></script>
+    <script src="main.js"></script>
+    
+    <!-- CSS imports -->
+    <link rel="stylesheet" href="ui-components.css">
+    <link rel="stylesheet" href="modals.css">
+</body>
+</html>

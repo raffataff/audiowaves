@@ -1,0 +1,760 @@
+/* @tweakable modal and dialog styles extracted from main stylesheet */
+
+/* @tweakable save dialog backdrop and positioning */
+.save-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 300ms ease;
+}
+
+/* @tweakable save dialog content container styling */
+.save-dialog-content {
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 350px;
+    max-width: 90vw;
+    text-align: center;
+    transform: scale(1);
+    transition: transform 300ms ease;
+}
+
+.save-dialog h3 {
+    margin-bottom: 20px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* @tweakable save options button layout */
+.save-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+/* @tweakable save button styling with hover effects */
+.save-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.save-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* @tweakable overwrite button distinctive styling */
+.save-btn.overwrite {
+    background: rgba(255, 165, 0, 0.3);
+    border-color: rgba(255, 165, 0, 0.6);
+}
+
+.save-btn.overwrite:hover {
+    background: rgba(255, 165, 0, 0.4);
+}
+
+/* @tweakable new preset button distinctive styling */
+.save-btn.new {
+    background: rgba(0, 255, 255, 0.3);
+    border-color: rgba(0, 255, 255, 0.6);
+}
+
+.save-btn.new:hover {
+    background: rgba(0, 255, 255, 0.4);
+}
+
+/* @tweakable confirm button styling */
+.save-btn.confirm {
+    background: rgba(0, 255, 0, 0.3);
+    border-color: rgba(0, 255, 0, 0.6);
+}
+
+.save-btn.confirm:hover {
+    background: rgba(0, 255, 0, 0.4);
+}
+
+/* @tweakable cancel button styling */
+.save-btn.cancel {
+    background: rgba(255, 100, 100, 0.3);
+    border-color: rgba(255, 100, 100, 0.6);
+}
+
+.save-btn.cancel:hover {
+    background: rgba(255, 100, 100, 0.4);
+}
+
+.new-preset-form {
+    margin-top: 16px;
+}
+
+.new-preset-form.hidden {
+    display: none;
+}
+
+/* @tweakable form buttons layout in new preset form */
+.form-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+/* Shader Generator Modal */
+/* @tweakable shader generator modal backdrop styling */
+.shader-generator-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 300ms ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* @tweakable shader generator form container styling */
+.generator-form {
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 12px;
+    max-width: 100%;
+    max-height: calc(100vh - 80px);
+    width: 100%;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 300ms ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* @tweakable form content wrapper for side-by-side layout */
+.form-content-wrapper {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.form-content-wrapper .form-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+/* @tweakable preview panel styling */
+.preview-panel {
+    width: 600px;
+    min-width:450px;
+    background: rgba(10, 10, 20, 0.9);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    transition: all 600ms ease;
+    flex-shrink: 0;
+}
+
+.preview-panel.hidden {
+    display: none !important;
+}
+
+.preview-panel.visible {
+    display: flex !important;
+    animation: slideIn 300ms ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.preview-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00ffff;
+    margin: 0;
+}
+
+.close-preview-btn {
+    background: rgba(255, 100, 100, 0.2);
+    border: 1px solid rgba(255, 100, 100, 0.4);
+    border-radius: 4px;
+    color: #ff6464;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+}
+
+.close-preview-btn:hover {
+    background: rgba(255, 100, 100, 0.4);
+}
+
+.preview-canvas {
+    flex: 1;
+    width: 100%;
+    min-width: 300px;
+    min-height: 300px;
+    border-radius: 8px;
+    background: #111;
+    display: block;
+    border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+/* Variant overlay panel - displays used variants in preview */
+.variant-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #e0e0e0;
+    pointer-events: none;
+    z-index: 10;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    max-width: 350px;
+    backdrop-filter: blur(4px);
+}
+
+.variant-overlay-title {
+    font-weight: 600;
+    color: #00ffff;
+    margin-bottom: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.variant-overlay-item {
+    padding: 2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.variant-overlay-item .effect-name {
+    color: #aaa;
+}
+
+.variant-overlay-item .variant-name {
+    color: #00ff88;
+    font-style: italic;
+}
+
+/* Form sections - more compact layout */
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Effects and controls grids - 3 columns */
+.effects-grid, .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+/* Form actions at bottom */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+/* Form header */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.form-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #00eeff;
+    margin: 0;
+}
+
+/* Responsive - single column on smaller screens */
+@media (max-width: 900px) {
+    .shader-generator-modal {
+        padding: 20px;
+    }
+    
+    .form-content-wrapper {
+        flex-direction: column;
+    }
+    
+    .preview-panel {
+        width: 100%;
+        min-width: unset;
+        min-height: 350px;
+    }
+    
+    .effects-grid, .controls-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+.close-btn {
+    background: rgba(255, 100, 100, 0.2);
+    border: 1px solid rgba(255, 100, 100, 0.4);
+    border-radius: 6px;
+    color: #ff6464;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.close-btn:hover {
+    background: rgba(255, 100, 100, 0.4);
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* @tweakable section label styling for form sections */
+.section-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #00ff88a2;
+    margin-bottom: 8px;
+}
+
+/* @tweakable effect selection grid layout */
+.effects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+/* @tweakable control selection grid layout */
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.effect-option, .control-option {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* @tweakable effect order indicator styling */
+.effect-order-indicator {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: transparent;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.effect-order-indicator.active {
+    background: linear-gradient(135deg, #00ffff, #ff00ff);
+    border-color: #00ffff;
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.effect-option:hover, .control-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.effect-checkbox, .control-checkbox {
+    display: none;
+}
+
+.effect-checkbox:checked + .effect-label,
+.control-checkbox:checked + .control-label {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.4);
+}
+
+.effect-label, .control-label {
+    display: block;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+/* @tweakable effect/control name styling */
+.effect-name, .control-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 4px;
+    border-bottom: #00eeff63 1px dashed;
+}
+
+/* @tweakable effect/control description styling */
+.effect-description, .control-description {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.3;
+}
+
+/* @tweakable color palette selection dropdown styling */
+.palette-select {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.palette-select option {
+    background: #2a2a3a;
+    color: white;
+}
+
+/* @tweakable shader name input styling */
+.shader-name-input {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.shader-name-input:focus {
+    border-color: rgba(0, 255, 255, 0.5);
+}
+
+.shader-name-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* @tweakable preview button unique styling */
+.preview-btn {
+    background: rgba(255, 165, 0, 0.3);
+    border-color: rgba(255, 165, 0, 0.6);
+}
+
+/* @tweakable generate button unique styling */
+.generate-btn {
+    background: rgba(0, 255, 255, 0.3);
+    border-color: rgba(0, 255, 255, 0.6);
+}
+
+/* Drop Zone */
+.drop-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.drop-zone.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.drop-content {
+    text-align: center;
+    border: 3px dashed rgba(0, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 40px;
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.drop-content h2 {
+    margin-bottom: 8px;
+    color: #00ffff;
+}
+
+/* @tweakable responsive design for shader generator on mobile */
+@media (max-width: 768px) {
+    .generator-form {
+        width: 95vw;
+        padding: 16px;
+        max-height: 95vh;
+    }
+
+    .effects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .controls-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+/* @tweakable shader export/import dialog styling */
+.shader-export-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.shader-export-dialog.visible {
+    opacity: 1;
+}
+
+.export-dialog-content {
+    background: linear-gradient(135deg, #1a1a2a 0%, #2a2a3a 100%);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.shader-export-dialog.visible .export-dialog-content {
+    transform: scale(1);
+}
+
+.export-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.export-dialog-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #fff;
+}
+
+.export-dialog-header .close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.export-dialog-header .close-btn:hover {
+    color: #fff;
+}
+
+.export-dialog-body {
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.export-section, .import-section {
+    margin-bottom: 24px;
+}
+
+.export-section h4, .import-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #00ffff;
+}
+
+.section-description {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 16px 0;
+}
+
+.export-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.export-btn, .import-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    text-align: left;
+}
+
+.export-btn:hover, .import-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.export-btn.primary {
+    background: rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.4);
+}
+
+.export-btn.primary:hover {
+    background: rgba(0, 255, 255, 0.3);
+}
+
+.import-btn.primary {
+    background: rgba(100, 200, 100, 0.2);
+    border-color: rgba(100, 200, 100, 0.4);
+}
+
+.import-btn.primary:hover {
+    background: rgba(100, 200, 100, 0.3);
+}
+
+.export-info {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.export-info p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.export-info p strong {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.import-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.import-status {
+    font-size: 13px;
+    color: rgba(100, 255, 100, 0.9);
+    margin: 8px 0 0 0;
+    min-height: 20px;
+}
