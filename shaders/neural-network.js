@@ -169,6 +169,3 @@ void main() {
 window['NeuralNetworkShader'] = NeuralNetworkShader;`;
     }
 }
-window['NeuralNetworkShader'] = NeuralNetworkShader;
-}
-window['NeuralNetworkShader'] = NeuralNetworkShader;

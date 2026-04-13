@@ -81,6 +81,7 @@ out vec4 fragColor;
 
                 vec3 palette(float t) {
                     return 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.0, 0.33, 0.67)));
+                }
 
         vec3 blend_Add(vec3 base, vec3 blend, float opacity) {
             return mix(base, base + blend, opacity);

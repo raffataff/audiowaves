@@ -217,6 +217,3 @@ void main() {
 window['GlitchCathedralShader'] = GlitchCathedralShader;`;
     }
 }
-window['GlitchCathedralShader'] = GlitchCathedralShader;
-}
-window['GlitchCathedralShader'] = GlitchCathedralShader;
