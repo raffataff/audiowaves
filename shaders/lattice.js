@@ -1,12 +1,12 @@
-/* Auto-generated custom shader - Chimera */
+/* Auto-generated custom shader - Lattice */
 /* Save this file to the shaders/ folder and add a script tag in index.html */
 
-class ChimeraShader {
+class LatticeShader {
     static getDefinition() {
         return {
-            name: 'Chimera',
-            thumbnail: 'data:image/jpeg;base64,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',
-            params: { speed: 1, intensity: 0.9, scale: 1.1, glow: 0.4, feedback: 0.99 },
+            name: 'Lattice',
+            thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5MYXR0aWNlPC90ZXh0Pjwvc3ZnPg==',
+            params: { speed: -0.5, intensity: 0.7, scale: 0.41, colorShift: 4.1 },
             fragmentShader: this.getShaderCode()
         };
     }
@@ -20,28 +20,35 @@ uniform vec2 u_resolution;
 uniform float u_bass;
 uniform float u_mid;
 uniform float u_treble;
-uniform float u_beat;
 uniform sampler2D u_prev_frame;
 uniform sampler2D u_spectrum;
 uniform float u_speed;
 uniform float u_intensity;
 uniform float u_scale;
-uniform float u_glow;
-uniform float u_feedback;
+uniform float u_colorShift;
 
 // Defaults for missing sliders
 #define u_amplitude 1.0
+#define u_glow 1.0
 #define u_complexity 1.0
-#define u_colorShift 0.0
 #define u_distortion 0.0
 #define u_rotation 0.0
 #define u_frequency 1.0
 #define u_symmetry 0.0
 #define u_turbulence 0.0
-
+#define u_feedback 0.50
+#define u_decay 0.85
 
 out vec4 fragColor;
 
+        vec3 tanh3(vec3 x) {
+            x = clamp(x, -3.0, 3.0);
+            return (exp(x) - exp(-x)) / (exp(x) + exp(-x));
+        }
+
+        float random(vec2 st) {
+            return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+        }
 
         float random(vec2 st) {
             return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -66,7 +73,17 @@ out vec4 fragColor;
         // Frequency texture sampler helper
         float getFreq(float f) {
             // Clamp to avoid texture edge artifacts
-            return texture(u_spectrum, vec2(clamp(f, 0.01, 0.99), 0.0)).r;
+            float freq = clamp(f, 0.01, 0.99);
+            float freqValue = texture(u_spectrum, vec2(freq, 0.0)).r;
+            
+            // Fallback: create demo pattern when no audio (spectrum is all zeros)
+            // This creates a gentle wave pattern so effects are visible in preview
+            float demo = 0.3 + 0.2 * sin(freq * 10.0 + u_time * 2.0) 
+                             + 0.15 * sin(freq * 25.0 + u_time * 3.0);
+            
+            // Mix between real audio and demo based on audio level
+            float audioLevel = freqValue;
+            return mix(demo, freqValue, step(0.01, audioLevel));
         }
         
 
@@ -137,60 +154,108 @@ void main() {
 
     // 3. Render Pipeline
     
-    // --- Layer 1: Plasma Waves ---
+    // --- Layer 1: Fluid Dynamics [Reef] ---
     {
         currentUV = uv;
         vec2 layerUV = currentUV;
-        float localTime = u_time * u_speed * 1.22;
+        float localTime = u_time * u_speed * 1.24;
         
-            vec2 p = layerUV * 2.0;
-            vec2 v = p;
-            float l = 0.0;
-            vec3 c = vec3(0.0);
-            l = abs((0.7 * (0.8 + u_mid * 0.5)) - dot(p,p));
-            v = p * (1.0 - l) / 0.2;
-            for(float i=0.0; i<(8.0 * (0.8 + u_mid * 0.5)); i++) {
-                c += (sin(vec3(v.x, v.y, v.y) * 2.0) + 1.0) * abs(v.x - v.y) * 0.2 + (u_mid * 1.5);
-                v += cos(v.yx * i + vec2(0.0, i) + localTime) / (i + 1.0) + 0.7;
-            }
-            vec3 glow = exp(p.y * vec3(1.0, -1.0, -(2.0 * u_scale))) * exp(-4.0 * l);
-            // SAFE: max(c, (0.1 * u_scale)) correct order
-            vec3 layerColor = tanh(glow / max(c, 0.1)) * (1.0 + u_mid);
+            vec3 rayDir = normalize(vec3(layerUV, -1.0));
+            vec3 p = vec3(0.0);
+            vec3 col = vec3(0.0);
+            float z = 0.0;
+            float d = 0.0;
             
-        layerColor *= u_amplitude * (0.8 + u_mid * 0.4);
+            // Audio reactive time 
+            float t = localTime + u_mid * 1.5;
+
+            for(float i = 1.0; i <= (30.0 * u_intensity); i++) {
+                p = z * rayDir;
+                
+                // Inner volumetric distortion loop
+                for(float j = 1.0; j <= 3.0; j++) {
+                    p += (0.4 * u_scale) * sin(p.yzx * j - z + t + i) / j + (0.5 * (0.8 + u_mid * 0.5));
+                }
+                
+                // Shape bounds function
+                vec4 distVec = vec4(abs(p.y + p.z * 0.5), sin(p - z) / (7.0 * (0.8 + u_mid * 0.5)));
+                d = length(distVec) / (4.0 + z * z / (100.0 * u_scale));
+                
+                // Original code effectively evaluates z += d *before* color division
+                z += d;
+                
+                vec3 pal = (0.9 * (0.8 + u_mid * 0.5)) + sin(i * 0.1 * u_bass - vec3((6.0 * (0.8 + u_mid * 0.5)), 1.0, 2.0));
+                
+                // SAFE: Ensure denominator is never pure zero
+                float denom = max(0.001, d * d * z);
+                
+                vec3 glow1 = pal / denom;
+                vec3 glow2 = (d * z) / vec3((4.0 * u_scale), 2.0, 1.0); 
+                
+                col += glow1 + glow2;
+            }
+            
+            float intens = 1.0;
+            #ifdef u_intensity
+                intens = u_intensity;
+            #endif
+            
+            // Scaled by 2000 as per original (o / 2e3), padded with gentle audio dynamics
+            vec3 layerColor = tanh3((col / 2000.0) * intens * (1.0 + u_mid * (0.2 * u_colorShift) / max(0.1, u_time)));
+            
+        layerColor *= u_amplitude * (0.8 + u_mid * 0.8);
         finalColor = layerColor;
     }
 
-    // --- Layer 2: Particle System ---
+    // --- Layer 2: Fractal Patterns [Mainframe] ---
     {
+        currentUV += (vec2(finalColor.r, finalColor.g) - 0.5) * 0.01 ;
         vec2 layerUV = currentUV;
-        float localTime = u_time * u_speed * 1.52;
+        float localTime = u_time * u_speed * 0.71;
         
+            // abs(layerUV) creates the 4-way kaleidoscopic mirroring effect
+            // Division by 0.4 in the original is equivalent to multiplying by (2.5 * u_colorShift)
+            vec2 p = abs(layerUV) * 2.5;
             vec3 col = vec3(0.0);
-            for(float i=0.0; i<8.0; i++) {
-                 float t = localTime + i * (0.5 * u_glow);
-                 vec2 p = vec2(cos(t), sin(t)) * (0.2 + i * 0.05);
-                 float d = length(layerUV - p);
-                 col += palette(i*(0.1 * (0.8 + u_mid * 0.5))) * (0.01 / d);
-            }
-            vec3 layerColor = col;
             
-        layerColor *= u_amplitude * (0.8 + u_mid * 0.4);
-        finalColor = blend_Screen(finalColor, layerColor, 0.5 + u_mid * 0.2);
-    }
+            // Audio reactive time 
+            float t = localTime * 1.0;
 
-    // --- Layer 3: Cosmic Space ---
-    {
-        currentUV += (vec2(finalColor.r, finalColor.g) - 0.5) * 0.1 * (1.0 + u_bass);
-        vec2 layerUV = currentUV;
-        float localTime = u_time * u_speed * 1.36;
-        
-            float n = fbm(layerUV * 3.0 + localTime * (0.1 * u_scale), 4);
-            float core = 1.0 / (length(layerUV) + (0.1 * (0.8 + u_mid * 0.5)));
-            vec3 layerColor = palette(n * (2.0 * u_glow)) * n * core * 0.5;
+            for(float i = 1.0; i <= 9.0; i++) {
+                vec2 v = p - i * 0.2;
+                
+                // Inner structural loop
+                for(float f = 1.0; f <= 7.0; f++) {
+                    // Calculate grid-like offsets using ceil()
+                    // v.yx swizzles the vector to swap X and Y components
+                    vec2 cell = ceil(v.yx + i * 0.1) * 9.0 + t;
+                    vec2 offset = sin(cell) / f;
+                    
+                    // Add offset and swap X/Y again to create the weaving matrix effect
+                    v = (v + offset).yx;
+                }
+                
+                float l = length(sin(v));
+                
+                // Color palette (converted from golfed vec4 to standard vec3)
+                vec3 pal = cos(i * 0.3 + u_bass * 1.5 + 0.5 - vec3(4.0, (5.0 * (0.8 + u_mid * 0.5)), 6.0)) + u_bass;
+                
+                // SAFE: Prevent division by zero using max()
+                // Original used .02 / l / l which equals .02 / (l * l)
+                col += (0.02 * u_scale) * pal / max(0.0001, l * l);
+            }
             
-        layerColor *= u_amplitude * (0.8 + u_mid * 0.4);
-        finalColor = blend_Screen(finalColor, layerColor, 0.5 + u_mid * 0.2);
+            float intens = 1.0;
+            #ifdef u_intensity
+                intens = u_intensity;
+            #endif
+            
+            // Because we don't have backbuffer trails, we pad the color intensity slightly 
+            // and use u_mid to make the data-streams pulse beautifully with the beat.
+            vec3 layerColor = max(tanh3(col * intens * (1.2 + u_mid * 0.8)), 0.0);
+            
+        layerColor *= u_amplitude * (0.8 + u_mid * 0.8);
+        finalColor = blend_Add(finalColor, layerColor, 0.5 + u_mid * 0.8);
     }
 
 
@@ -229,8 +294,8 @@ void main() {
     // Automatically enable trails on high energy
     float volume = (u_bass + u_mid + u_treble) / 3.0;
     
-    if(volume > 0.7 || u_beat > 0.9) {
-        // Force feedback ON during the beat
+    if(volume > 0.8) {
+        // Force feedback ON during high energy
         fbAmount = max(fbAmount, 0.85);
         // Make trails last slightly longer during the hit
         dcAmount = max(dcAmount, 0.96);
@@ -248,3 +313,4 @@ void main() {
 }`;
     }
 }
+window['LatticeShader'] = LatticeShader;

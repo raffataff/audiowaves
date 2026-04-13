@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spectral Nexus - Audio Visualizer</title>
+    <title>AudioWaves</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
@@ -27,9 +30,16 @@
   }
 }
 </script>
-  
+
 </head>
 <body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="logo-full.png" alt="AudioWaves Logo" class="splash-logo">
+        </div>
+    </div>
+
     <div id="app">
         <!-- Main Canvas -->
         <canvas id="visualizer-canvas"></canvas>
@@ -39,7 +49,7 @@
             <!-- Top Controls Panel -->
             <div id="top-panel" class="panel">
                 <div class="panel-header">
-                    <h1 class="app-title">Spectral Nexus</h1>
+                    <h1 class="app-title">AudioWaves</h1>
                     <div class="window-controls">
                         <button id="settings-btn" class="icon-btn" data-tooltip="Settings">⚙️</button>
                         <button id="fullscreen-btn" class="icon-btn" data-tooltip="Toggle fullscreen">⛶</button>
@@ -167,7 +177,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
     <!-- Utils must load first for shared functions -->
     <script src="utils.js"></script>
-    <script src="shaders/cosmic-flow.js"></script>
+    <script src="custom-dialogs.js"></script>
+    <script src="shaders/barCode.js"></script>
+    <script src="shaders/lattice.js"></script>
     <script src="shaders/glitch-cathedral.js"></script>
     <script src="shaders/liquid-chrome.js"></script>
     <script src="shaders/neural-network.js"></script>

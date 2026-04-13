@@ -1,16 +1,9 @@
-/* @tweakable liquid chrome fluidity factor */
-const u_turbulence = 1.0;
-
-/* @tweakable metallic reflection intensity multiplier */
-const u_colorShift = 0.8;
-
 class LiquidChromeShader {
     static getDefinition() {
         return {
             name: 'Liquid Chrome',
             thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImMiPjxzdG9wIHN0b3AtY29sb3I9IiNjMGMwYzAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzMDMwMzAiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNjKSIvPjwvc3ZnPg==',
-            /* @tweakable update shader parameters to use new turbulence and colorShift uniforms */
-            params: { turbulence: u_turbulence, colorShift: u_colorShift },
+            params: { turbulence: 1.0, colorShift: 0.8 },
             fragmentShader: this.getShaderCode()
         };
     }
@@ -31,6 +24,7 @@ uniform float u_speed;
 uniform float u_distortion;
 uniform float u_symmetry;
 uniform float u_turbulence;
+uniform float u_colorShift;
 
 out vec4 fragColor;
 
@@ -63,7 +57,7 @@ out vec4 fragColor;
 
 
                 vec3 palette(float t) {
-                    return 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.0, 0.33, 0.67)));
+                    return 0.5 + 0.5 * cos(6.28318 * (t * (1.0 + u_colorShift) + vec3(0.0, 0.33, 0.67)));
                 }
 
         vec3 blend_Add(vec3 base, vec3 blend, float opacity) {
@@ -252,6 +246,8 @@ void main() {
 
     // Final clamp and alpha
     fragColor = vec4(max(vec3(0.0), finalColor), 1.0);
-}`;
+}
+window['LiquidChromeShader'] = LiquidChromeShader;`;
     }
 }
+window['LiquidChromeShader'] = LiquidChromeShader;

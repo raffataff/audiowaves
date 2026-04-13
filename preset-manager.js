@@ -168,7 +168,7 @@ class PresetManager {
     /* @tweakable enhanced preset creation with custom parameters */
     addNewPreset(name, shaderCode, customParams = null) {
         /* @tweakable default parameters for new custom presets */
-        const defaultParams = customParams || { ...DEFAULT_SHADER_PARAMS };
+        const defaultParams = customParams || {};
         
         const newPreset = {
             name: name,
@@ -192,42 +192,34 @@ class PresetManager {
         const builtInPresetCount = 6;
         
         if (index < builtInPresetCount) {
-            /* @tweakable warning message for attempting to delete built-in presets */
             const warningMessage = 'Built-in presets cannot be deleted.';
-            alert(warningMessage);
+            Dialogs.alert(warningMessage, 'Warning');
             return;
         }
 
         const preset = this.shaderPresets[index];
         
-        /* @tweakable whether to show confirmation dialog when removing presets */
-        const showConfirmation = true;
-        if (showConfirmation) {
-            /* @tweakable confirmation message for preset removal */
-            const confirmMessage = `Delete shader preset "${preset.name}"? This action cannot be undone.`;
-            if (!confirm(confirmMessage)) {
-                return;
-            }
-        }
+        const confirmMessage = `Delete shader preset "${preset.name}"? This action cannot be undone.`;
+        Dialogs.confirm(confirmMessage, 'Delete Preset').then(() => {
+            this._removePreset(index, preset);
+        }).catch(() => {
+            // Cancelled - do nothing
+        });
+    }
 
-        // Remove preset from array
+    _removePreset(index, preset) {
         this.shaderPresets.splice(index, 1);
 
-        // Handle current preset index adjustment
         if (index === this.currentPreset) {
-            // Currently selected preset is being removed
-            /* @tweakable fallback preset index when current is deleted */
             const fallbackPresetIndex = 0;
             this.selectPreset(Math.min(fallbackPresetIndex, this.shaderPresets.length - 1));
         } else if (index < this.currentPreset) {
-            // Preset before current was removed, adjust index
             this.currentPreset--;
         }
 
         this.render();
         this.saveState();
         
-        /* @tweakable success notification duration when preset is deleted */
         const notificationDuration = 2000;
         this.notifications.showPresetDeleteNotification(preset.name, notificationDuration);
     }

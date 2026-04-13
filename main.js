@@ -152,8 +152,12 @@ class TooltipManager {
         }
         
         /* @tweakable ensure tooltip stays within viewport bounds */
-        left = Math.max(this.offset, Math.min(left, viewportWidth - tooltipRect.width - this.offset));
-        top = Math.max(this.offset, Math.min(top, viewportHeight - tooltipRect.height - this.offset));
+        if (position === 'left' || position === 'right') {
+            top = Math.max(this.offset, Math.min(top, viewportHeight - tooltipRect.height - this.offset));
+        } else {
+            left = Math.max(this.offset, Math.min(left, viewportWidth - tooltipRect.width - this.offset));
+            top = Math.max(this.offset, Math.min(top, viewportHeight - tooltipRect.height - this.offset));
+        }
         
         tooltip.style.left = left + 'px';
         tooltip.style.top = top + 'px';
@@ -640,14 +644,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check for WebGL2 support
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl2');
-    
+
     if (!gl) {
         alert('WebGL2 is required but not supported in your browser. Please use a modern browser.');
         return;
     }
-    
-    // Initialize the app
-    window.spectralNexus = new SpectralNexus();
+
+    // Show splash screen for 3 seconds, then fade out and initialize app
+    const splashScreen = document.getElementById('splash-screen');
+    setTimeout(() => {
+        splashScreen.classList.add('fade-out');
+        setTimeout(() => {
+            splashScreen.style.display = 'none';
+            // Initialize the app after splash screen fades out
+            window.spectralNexus = new SpectralNexus();
+        }, 1000); // Wait for fade-out animation to complete
+    }, 3000); // Show splash for 3 seconds
 });
 
 // Handle page unload

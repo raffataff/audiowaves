@@ -4,7 +4,7 @@ class PlasmaStormShader {
         return {
             name: 'Plasma Storm',
             thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InBzIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMzMwMDMzIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNmZjAwNjYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmZmMDAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNwcykiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIzMCIgZmlsbD0icmdiYSgyNTUsMjU1LDAsMC4zKSIvPjwvc3ZnPg==',
-            params: { ...DEFAULT_SHADER_PARAMS },
+            params: { intensity: 1.0, turbulence: 0.5 },
             fragmentShader: this.getShaderCode()
         };
     }
@@ -130,6 +130,8 @@ void main() {
 
     // Output color with lightning stored in alpha channel for next frame
     fragColor = vec4(color, lightning);
-}`;
+}
+window['PlasmaStormShader'] = PlasmaStormShader;`;
     }
 }
+window['PlasmaStormShader'] = PlasmaStormShader;

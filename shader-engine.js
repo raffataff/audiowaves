@@ -226,61 +226,69 @@ class ShaderEngine {
             }
         `;
         
-        const fragmentShader = `#version 300 es
-            precision highp float;
-            
-            uniform float u_time;
-            uniform vec2 u_resolution;
-            uniform float u_bass;
-            uniform float u_mid;
-            uniform float u_treble;
-            uniform float u_beat;
-            uniform sampler2D u_prev_frame;
-            uniform sampler2D u_spectrum;
-            
-            out vec4 fragColor;
-            
-            vec3 palette(float t) {
-                vec3 a = vec3(0.5, 0.5, 0.5);
-                vec3 b = vec3(0.5, 0.5, 0.5);
-                vec3 c = vec3(1.0, 1.0, 1.0);
-                vec3 d = vec3(0.263, 0.416, 0.557);
-                return a + b * cos(6.28318 * (c * t + d));
-            }
-            
-            void main() {
-                vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution) / u_resolution.y;
-                
-                // Sample spectrum texture
-                float specVal = texture(u_spectrum, vec2(length(uv) * 0.5, 0.0)).r;
-                
-                vec2 uv0 = uv;
-                vec3 finalColor = vec3(0.0);
-                
-                for (float i = 0.0; i < 4.0; i++) {
-                    uv = fract(uv * 1.5) - 0.5;
-                    
-                    float d = length(uv) * exp(-length(uv0));
-                    vec3 col = palette(length(uv0) + i * 0.4 + u_time * 0.4 + u_bass * 2.0);
-                    
-                    d = sin(d * 8.0 + u_time + u_beat * 10.0) / 8.0;
-                    d = abs(d);
-                    d = pow(0.01 / d, 1.2);
-                    
-                    finalColor += col * d * (1.0 + u_treble * 2.0 + specVal * 2.0);
-                }
-                
-                // Feedback effect
-                vec2 prevUV = gl_FragCoord.xy / u_resolution;
-                vec3 prevColor = texture(u_prev_frame, prevUV).rgb;
-                finalColor = mix(finalColor, prevColor * 0.98, 0.1 + u_mid * 0.3);
-                
-                fragColor = vec4(finalColor, 1.0);
-            }
-        `;
-        
+        // Use first available preset shader (LatticeShader) as default instead of hardcoded
         try {
-            this.program = this.createProgram(vertexShader, fragmentShader);
+            const presets = ShaderDefinitions.getPresetShaders();
+            if (presets.length > 0) {
+                const defaultShader = presets[0];
+                this.program = this.createProgram(vertexShader, defaultShader.fragmentShader);
+                console.log('Loaded default shader:', defaultShader.name);
+            } else {
+                // Fallback to hardcoded shader only if no presets available
+                const fragmentShader = `#version 300 es
+                    precision highp float;
+                    
+                    uniform float u_time;
+                    uniform vec2 u_resolution;
+                    uniform float u_bass;
+                    uniform float u_mid;
+                    uniform float u_treble;
+                    uniform float u_beat;
+                    uniform sampler2D u_prev_frame;
+                    uniform sampler2D u_spectrum;
+                    
+                    out vec4 fragColor;
+                    
+                    vec3 palette(float t) {
+                        vec3 a = vec3(0.5, 0.5, 0.5);
+                        vec3 b = vec3(0.5, 0.5, 0.5);
+                        vec3 c = vec3(1.0, 1.0, 1.0);
+                        vec3 d = vec3(0.263, 0.416, 0.557);
+                        return a + b * cos(6.28318 * (c * t + d));
+                    }
+                    
+                    void main() {
+                        vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution) / u_resolution.y;
+                        
+                        // Sample spectrum texture
+                        float specVal = texture(u_spectrum, vec2(length(uv) * 0.5, 0.0)).r;
+                        
+                        vec2 uv0 = uv;
+                        vec3 finalColor = vec3(0.0);
+                        
+                        for (float i = 0.0; i < 4.0; i++) {
+                            uv = fract(uv * 1.5) - 0.5;
+                            
+                            float d = length(uv) * exp(-length(uv0));
+                            vec3 col = palette(length(uv0) + i * 0.4 + u_time * 0.4 + u_bass * 2.0);
+                            
+                            d = sin(d * 8.0 + u_time + u_beat * 10.0) / 8.0;
+                            d = abs(d);
+                            d = pow(0.01 / d, 1.2);
+                            
+                            finalColor += col * d * (1.0 + u_treble * 2.0 + specVal * 2.0);
+                        }
+                        
+                        // Feedback effect
+                        vec2 prevUV = gl_FragCoord.xy / u_resolution;
+                        vec3 prevColor = texture(u_prev_frame, prevUV).rgb;
+                        finalColor = mix(finalColor, prevColor * 0.98, 0.1 + u_mid * 0.3);
+                        
+                        fragColor = vec4(finalColor, 1.0);
+                    }
+                `;
+                this.program = this.createProgram(vertexShader, fragmentShader);
+            }
             this.setupUniforms();
             this.setupGeometry();
         } catch (error) {

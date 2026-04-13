@@ -39,10 +39,20 @@ class PresetStorage {
                     const builtInCount = state.builtInPresetCount || 6;
                     for (let i = 0; i < Math.min(builtInCount, restoredPresets.length); i++) {
                         if (state.allPresets[i]) {
+                            // Only restore params that exist in the current shader definition
+                            const currentParams = restoredPresets[i].params;
+                            const savedParams = state.allPresets[i].params || {};
+                            const filteredParams = {};
+                            for (const key of Object.keys(currentParams)) {
+                                if (savedParams.hasOwnProperty(key)) {
+                                    filteredParams[key] = savedParams[key];
+                                }
+                            }
+                            
                             restoredPresets[i] = {
                                 ...restoredPresets[i],
                                 fragmentShader: state.allPresets[i].fragmentShader || restoredPresets[i].fragmentShader,
-                                params: { ...restoredPresets[i].params, ...state.allPresets[i].params },
+                                params: { ...currentParams, ...filteredParams },
                                 /* @tweakable restore custom thumbnails if available */
                                 thumbnail: state.allPresets[i].thumbnail || restoredPresets[i].thumbnail
                             };

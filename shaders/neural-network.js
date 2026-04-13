@@ -1,15 +1,9 @@
-/* @tweakable neural network node size scaling factor */
-const NEURAL_NETWORK_NODE_SIZE = 1.0;
-
-/* @tweakable network connectivity range multiplier */
-const NEURAL_NETWORK_CONNECTIVITY = 1.0;
-
 class NeuralNetworkShader {
     static getDefinition() {
         return {
             name: 'Neural Network',
             thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImQiPjxzdG9wIHN0b3AtY29sb3I9IiMwMGZmNDAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDQwZmYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNkKSIvPjwvc3ZnPg==',
-            params: { nodeSize: NEURAL_NETWORK_NODE_SIZE, connectivity: NEURAL_NETWORK_CONNECTIVITY },
+            params: { scale: 1.0, rotation: 0.1 },
             fragmentShader: this.getShaderCode()
         };
     }
@@ -171,6 +165,10 @@ void main() {
     
 
     fragColor = vec4(max(vec3(0.0), finalColor), 1.0);
-}`;
+}
+window['NeuralNetworkShader'] = NeuralNetworkShader;`;
     }
 }
+window['NeuralNetworkShader'] = NeuralNetworkShader;
+}
+window['NeuralNetworkShader'] = NeuralNetworkShader;

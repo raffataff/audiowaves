@@ -3,7 +3,7 @@ class ShaderExporter {
     constructor(presetManager) {
         this.presetManager = presetManager;
         /* @tweakable built-in preset count - shaders before this index are considered built-in */
-        this.builtInPresetCount = 6;
+        this.builtInPresetCount = 10;
         /* @tweakable whether to use File System Access API for choosing save location */
         this.useFilePicker = true;
     }
@@ -143,7 +143,7 @@ class ${className}Shader {
             }));
 
         if (customPresets.length === 0) {
-            alert('No custom shaders to export. Create some custom shaders first!');
+            Dialogs.alert('No custom shaders to export. Create some custom shaders first!', 'Export');
             return;
         }
 

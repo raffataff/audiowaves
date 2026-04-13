@@ -297,10 +297,10 @@ input[type="text"]:focus {
     border-bottom: 5px solid rgba(0, 0, 0, 0.9);
 }
 
-.tooltip.bottom { top: 100%; margin-top: 8px; }
-.tooltip.top { bottom: 100%; margin-bottom: 8px; }
+.tooltip.bottom { }
+.tooltip.top { }
 .tooltip.top::before { top: auto; bottom: -5px; border-bottom: none; border-top: 5px solid rgba(0, 0, 0, 0.9); }
-.tooltip.left { right: 100%; margin-right: 8px; top: 50%; transform: translateY(-50%); }
+.tooltip.left { }
 .tooltip.left::before { top: 50%; left: auto; right: -5px; transform: translateY(-50%); border-bottom: 5px solid transparent; border-top: 5px solid transparent; border-left: 5px solid rgba(0, 0, 0, 0.9); border-right: none; }
-.tooltip.right { left: 100%; margin-left: 8px; top: 50%; transform: translateY(-50%); }
+.tooltip.right { }
 .tooltip.right::before { top: 50%; left: -5px; right: auto; transform: translateY(-50%); border-bottom: 5px solid transparent; border-top: 5px solid transparent; border-right: 5px solid rgba(0, 0, 0, 0.9); border-left: none; }

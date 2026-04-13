@@ -37,6 +37,8 @@ class ShaderGeneratorCompiler {
         if (!controlIds.includes('frequency')) defaultConstants += '#define u_frequency 1.0\n';
         if (!controlIds.includes('symmetry')) defaultConstants += '#define u_symmetry 0.0\n';
         if (!controlIds.includes('turbulence')) defaultConstants += '#define u_turbulence 0.0\n';
+        if (!controlIds.includes('feedback')) defaultConstants += '#define u_feedback 0.0\n';
+        if (!controlIds.includes('decay')) defaultConstants += '#define u_decay 0.95\n';
 
         // 3. GENERATE LOGIC BLOCKS
         const dynamicParams = this.generateDynamicParameters(controls);
@@ -257,16 +259,10 @@ void main() {
     prevColor *= border.x * border.y;
 
     // 3. DECAY
-    float dcAmount = 0.95; 
-    #ifdef u_decay
-        dcAmount = u_decay;
-    #endif
+    float dcAmount = u_decay;
 
     // 4. FEEDBACK AMOUNT
-    float fbAmount = 0.0;
-    #ifdef u_feedback
-        fbAmount = u_feedback;
-    #endif
+    float fbAmount = u_feedback;
 
     // --- RESTORED TRIGGER LOGIC ---
     // Automatically enable trails on high energy

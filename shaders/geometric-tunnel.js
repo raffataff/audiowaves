@@ -1,15 +1,9 @@
-/* @tweakable geometric tunnel animation speed factor */
-const GEOMETRIC_TUNNEL_SPEED = 1.0;
-
-/* @tweakable geometric pattern complexity multiplier */
-const GEOMETRIC_TUNNEL_COMPLEXITY = 1.0;
-
 class GeometricTunnelShader {
     static getDefinition() {
         return {
             name: 'Geometric Tunnel',
             thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImYiPjxzdG9wIHN0b3AtY29sb3I9IiNmZmZmMDAiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZjAwZmYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNmKSIvPjwvc3ZnPg==',
-            params: { speed: GEOMETRIC_TUNNEL_SPEED, geometry: GEOMETRIC_TUNNEL_COMPLEXITY },
+            params: { speed: 1.0, complexity: 1.0 },
             fragmentShader: this.getShaderCode()
         };
     }
@@ -29,6 +23,19 @@ uniform sampler2D u_prev_frame;
 uniform float u_distortion;
 uniform float u_complexity;
 uniform float u_rotation;
+
+// Defaults for missing sliders
+#define u_speed 1.0
+#define u_amplitude 1.0
+#define u_glow 1.0
+#define u_intensity 1.0
+#define u_colorShift 0.0
+#define u_scale 1.0
+#define u_frequency 1.0
+#define u_symmetry 0.0
+#define u_turbulence 0.0
+#define u_feedback 0.0
+#define u_decay 0.95
 
 out vec4 fragColor;
 
@@ -102,6 +109,36 @@ void main() {
 
     // Beat flash
     color += u_beat * vec3(1.0, 1.0, 1.0) * 0.6;
+
+    // 5. Feedback Trail
+    vec2 screenUV = gl_FragCoord.xy / u_resolution.xy;
+
+    // 1. STATIONARY SAMPLING
+    vec2 diff = (vec2(random(screenUV + u_time), random(screenUV - u_time)) - 0.5) * 0.002 * u_bass;
+    vec3 prevColor = texture(u_prev_frame, screenUV + diff).rgb;
+
+    // 2. BORDER FADE
+    vec2 border = smoothstep(vec2(0.0), vec2(0.02), screenUV) * (1.0 - smoothstep(vec2(0.98), vec2(1.0), screenUV));
+    prevColor *= border.x * border.y;
+
+    // 3. DECAY
+    float dcAmount = u_decay;
+
+    // 4. FEEDBACK AMOUNT
+    float fbAmount = u_feedback;
+
+    // Trigger on high energy
+    float volume = (u_bass + u_mid + u_treble) / 3.0;
+
+    if(volume > 0.7 || u_beat > 0.9) {
+        fbAmount = max(fbAmount, 0.85);
+        dcAmount = max(dcAmount, 0.96);
+    }
+
+    prevColor *= dcAmount;
+
+    vec3 trails = max(color, prevColor);
+    color = mix(color, trails, clamp(fbAmount, 0.0, 1.0));
 
     fragColor = vec4(color, 1.0);
 }`;

@@ -324,10 +324,12 @@ class ShaderEditor {
                 closeDialog();
             }
             else if(e.target.dataset.action === 'overwrite') {
-                if(confirm("Overwrite the current preset?")) {
+                Dialogs.confirm("Overwrite the current preset?", "Confirm Overwrite").then(() => {
                     this.presetManager.updatePresetShader(this.currentPresetIndex, code);
                     closeDialog();
-                }
+                }).catch(() => {
+                    // Cancelled - do nothing
+                });
             }
             else if(e.target.dataset.action === 'new') {
                 dialog.querySelector('.save-options').classList.add('hidden');
