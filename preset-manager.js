@@ -101,6 +101,21 @@ class PresetManager {
                 gl_Position = a_position;
             }`;
 
+        if (!preset || !preset.fragmentShader) {
+            console.error('Invalid preset - missing fragmentShader:', preset?.name);
+            // Load fallback shader instead
+            try {
+                const fallback = ShaderDefinitions.getFallbackShader();
+                const result = this.shaderEngine.loadShader(vertexShader, fallback);
+                if (!result.success) {
+                    console.error('Failed to load fallback shader:', result.error);
+                }
+            } catch (e) {
+                console.error('Error loading fallback shader:', e);
+            }
+            return;
+        }
+
         const result = this.shaderEngine.loadShader(vertexShader, preset.fragmentShader);
         
         if (!result.success) {

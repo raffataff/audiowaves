@@ -28,6 +28,12 @@ uniform float u_colorShift;
 
 out vec4 fragColor;
 
+#define MIN_RADIUS 0.002
+
+float safeRadius(vec2 p) {
+    return max(length(p), MIN_RADIUS);
+}
+
 
         float random(vec2 st) {
             return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -187,7 +193,7 @@ void main() {
             for(int i = 0; i < 3; i++) {
                 float fi = float(i);
                 vec2 cell = vec2(sin(fi * 2.4 + localTime + u_bass), cos(fi * 1.7 + localTime));
-                plasma += 1.0 / length(p - cell * 2.0);
+                plasma += 1.0 / safeRadius(p - cell * 2.0);
             }
             plasma *= 0.3;
             layerColor = palette(plasma + u_treble * 0.4);
@@ -220,7 +226,7 @@ void main() {
         vec2 layerUV = uv;
         float localTime = u_time * 1.02;
         
-            float radius = length(layerUV);
+            float radius = safeRadius(layerUV);
             float angle = atan(layerUV.y, layerUV.x);
             float tunnel = 1.0 / radius + localTime + u_bass * 2.0;
             float pattern = sin(tunnel * 5.0) * cos(angle * 8.0);
@@ -247,7 +253,7 @@ void main() {
     // Final clamp and alpha
     fragColor = vec4(max(vec3(0.0), finalColor), 1.0);
 }
-window['LiquidChromeShader'] = LiquidChromeShader;`;
+`;
     }
 }
 window['LiquidChromeShader'] = LiquidChromeShader;

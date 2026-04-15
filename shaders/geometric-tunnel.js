@@ -36,6 +36,11 @@ uniform float u_rotation;
 #define u_turbulence 0.0
 #define u_feedback 0.0
 #define u_decay 0.95
+#define MIN_RADIUS 0.002
+
+float safeRadius(vec2 p) {
+    return max(length(p), MIN_RADIUS);
+}
 
 out vec4 fragColor;
 
@@ -73,7 +78,7 @@ void main() {
     // Effect 2: Tunnel Effect
     {
         
-        float radius = length(uv);
+        float radius = safeRadius(uv);
         float angle = atan(uv.y, uv.x);
         float tunnel = 1.0 / radius + u_time + u_bass * 2.0;
         float pattern = sin(tunnel * 5.0) * cos(angle * 8.0);
@@ -141,6 +146,8 @@ void main() {
     color = mix(color, trails, clamp(fbAmount, 0.0, 1.0));
 
     fragColor = vec4(color, 1.0);
-}`;
+}
+`;
     }
 }
+window['GeometricTunnelShader'] = GeometricTunnelShader;

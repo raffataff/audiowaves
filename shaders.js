@@ -43,9 +43,14 @@ class ShaderDefinitions {
             
             if (typeof ShaderClass !== 'undefined' && ShaderClass.getDefinition) {
                 const def = ShaderClass.getDefinition();
-                // Derive name from filename and format it nicely
-                def.name = this.filenameToDisplayName(filename);
-                availableShaders.push(def);
+                // Only add if it has valid fragmentShader
+                if (def.fragmentShader) {
+                    // Derive name from filename and format it nicely
+                    def.name = this.filenameToDisplayName(filename);
+                    availableShaders.push(def);
+                } else {
+                    console.warn(`Shader '${className}' has no fragmentShader - skipping`);
+                }
             } else {
                 console.warn(`Shader class '${className}' (from ${filename}) not available`);
             }
@@ -97,6 +102,12 @@ class ShaderDefinitions {
 
             out vec4 fragColor;
 
+            #define MIN_DIVISOR 0.001
+            #define MIN_RADIUS 0.002
+
+            float safeRadius(vec2 p) {
+                return max(length(p), MIN_RADIUS);
+            }
 
                     float random(vec2 st) {
                         return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);

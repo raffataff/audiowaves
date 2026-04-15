@@ -26,6 +26,12 @@ uniform float u_rotation;
 
 out vec4 fragColor;
 
+#define MIN_RADIUS 0.002
+
+float safeRadius(vec2 p) {
+    return max(length(p), MIN_RADIUS);
+}
+
 
         float random(vec2 st) {
             return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -151,7 +157,7 @@ void main() {
         float localTime = u_time * u_speed * 1.87;
         
             float n = fbm(layerUV * 3.0 + localTime * 0.1, 4);
-            float core = 1.0 / (length(layerUV) + 0.1);
+            float core = 1.0 / (safeRadius(layerUV) + 0.1);
             vec3 layerColor = palette(n * 1.50 * u_mid) * n * core * 0.5;
             
         finalColor = blend_Difference(finalColor, layerColor, u_mid * 0.8);
@@ -166,6 +172,7 @@ void main() {
 
     fragColor = vec4(max(vec3(0.0), finalColor), 1.0);
 }
-window['NeuralNetworkShader'] = NeuralNetworkShader;`;
+`;
     }
 }
+window['NeuralNetworkShader'] = NeuralNetworkShader;

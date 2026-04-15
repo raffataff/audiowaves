@@ -313,9 +313,9 @@ body {
 
 .preset-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    gap: 16px;
-    padding: 5px;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0px;
+    padding-right: 15px;
     overflow-x: auto;
     overflow-y: hidden;
     flex: 1;

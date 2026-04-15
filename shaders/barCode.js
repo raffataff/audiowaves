@@ -274,6 +274,8 @@ void main() {
         
 
     fragColor = vec4(max(vec3(0.0), finalColor), 1.0);
-}`;
+}
+`;
     }
 }
+window['BarCodeShader'] = BarCodeShader;

@@ -214,6 +214,7 @@ void main() {
     
     fragColor = vec4(color, 1.0);
 }
-window['GlitchCathedralShader'] = GlitchCathedralShader;`;
+`;
     }
 }
+window['GlitchCathedralShader'] = GlitchCathedralShader;

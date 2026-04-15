@@ -131,7 +131,7 @@ void main() {
     // Output color with lightning stored in alpha channel for next frame
     fragColor = vec4(color, lightning);
 }
-window['PlasmaStormShader'] = PlasmaStormShader;`;
+`;
     }
 }
 window['PlasmaStormShader'] = PlasmaStormShader;
