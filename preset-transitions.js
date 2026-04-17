@@ -1,9 +1,7 @@
-/* @tweakable preset transition management with blend effects */
 class PresetTransitions {
     constructor(presetManager) {
         this.presetManager = presetManager;
         
-        /* @tweakable transition system configuration */
         this.isTransitioning = false;
         this.transitionDuration = DEFAULT_TRANSITION_DURATION;
         this.transitionProgress = 0.0;
@@ -17,7 +15,6 @@ class PresetTransitions {
         this.shaderCache = new Map();
     }
 
-    /* @tweakable start blend transition between shaders */
     startTransition(fromIndex, toIndex) {
         if (this.isTransitioning || toIndex < 0) return;
         
@@ -26,11 +23,9 @@ class PresetTransitions {
         this.transitionStartTime = Date.now();
         this.targetPresetIndex = toIndex;
         
-        /* @tweakable select and configure random blend mode */
         this.currentBlendMode = BlendShaders.getRandomBlendMode();
         const randomizedParams = BlendShaders.randomizeBlendParams(this.currentBlendMode);
         
-        /* @tweakable map blend mode parameters to uniform values */
         this.blendParams = {
             param1: Object.values(randomizedParams)[0] || 0,
             param2: Object.values(randomizedParams)[1] || 0,
@@ -40,13 +35,11 @@ class PresetTransitions {
         
         console.log(`Starting transition with ${this.currentBlendMode.name} blend mode`);
         
-        /* @tweakable create and load transition shader */
         this.createTransitionShader(fromIndex, toIndex);
         this.updateTransition();
     }
 
     
-/* @tweakable create transition shader from current and target presets */
     createTransitionShader(fromIndex, toIndex) {
         const fromPreset = this.presetManager.shaderPresets[fromIndex];
         const toPreset = this.presetManager.shaderPresets[toIndex];
@@ -95,7 +88,6 @@ class PresetTransitions {
         }
     }
 
-    /* @tweakable update transition progress and uniforms */
     updateTransition() {
         if (!this.isTransitioning) return;
         
@@ -103,7 +95,6 @@ class PresetTransitions {
         const elapsed = now - this.transitionStartTime;
         this.transitionProgress = Math.min(elapsed / this.transitionDuration, 1.0);
         
-        /* @tweakable set transition uniforms on shader engine */
         const gl = this.presetManager.shaderEngine.gl;
         if (gl && this.presetManager.shaderEngine.program) {
             const transitionProgressLoc = gl.getUniformLocation(this.presetManager.shaderEngine.program, 'u_transitionProgress');
@@ -119,16 +110,13 @@ class PresetTransitions {
             if (blendParam4Loc) gl.uniform1f(blendParam4Loc, this.blendParams.param4);
         }
         
-        /* @tweakable transition completion check */
         if (this.transitionProgress >= 1.0) {
             this.completeTransition();
         } else {
-            /* @tweakable schedule next transition update */
             this.transitionAnimationId = requestAnimationFrame(() => this.updateTransition());
         }
     }
 
-    /* @tweakable complete transition and switch to target preset */
     completeTransition() {
         this.isTransitioning = false;
         
@@ -137,11 +125,9 @@ class PresetTransitions {
             this.transitionAnimationId = null;
         }
         
-        /* @tweakable finalize preset switch */
         this.presetManager.currentPreset = this.targetPresetIndex;
         this.targetPresetIndex = -1;
         
-        /* @tweakable load final shader without transition */
         const preset = this.presetManager.shaderPresets[this.presetManager.currentPreset];
         this.presetManager.loadPresetShader(preset);
         

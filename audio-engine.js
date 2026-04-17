@@ -33,6 +33,9 @@ class AudioEngine {
         this.crossfadeDuration = 2; // seconds
         this.isCrossfading = false;
         
+        this.externalInputSource = null;
+        this.externalInputType = null;
+        
         this.setupAudioPlayers();
     }
     
@@ -93,17 +96,17 @@ class AudioEngine {
     async connectAudioSource(audioElement) {
         if (!this.isInitialized) await this.initialize();
         
+        this.disconnectExternalInput();
+        
         try {
             const isPlayer1 = audioElement === this.audioPlayer1;
             let sourceNode = isPlayer1 ? this.sourceNode1 : this.sourceNode2;
             const gainToUse = isPlayer1 ? this.crossfadeGain1 : this.crossfadeGain2;
 
             if (sourceNode) {
-                // Already connected
                 return;
             }
 
-            // Disconnect other source if it exists, to be safe
             if(isPlayer1 && this.sourceNode2) {
                 this.sourceNode2.disconnect();
             } else if (!isPlayer1 && this.sourceNode1) {
@@ -125,23 +128,129 @@ class AudioEngine {
         }
     }
     
+    disconnectExternalInput() {
+        if (this.externalInputSource) {
+            this.externalInputSource.disconnect();
+            this.externalInputSource = null;
+            this.externalInputType = null;
+        }
+    }
+    
     async connectMicrophone() {
         if (!this.isInitialized) await this.initialize();
+        
+        this.disconnectExternalInput();
         
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             
-            if (this.sourceNode) {
-                this.sourceNode.disconnect();
-            }
-            
-            this.sourceNode = this.audioContext.createMediaStreamSource(stream);
-            this.sourceNode.connect(this.gainNode);
+            this.externalInputSource = this.audioContext.createMediaStreamSource(stream);
+            this.externalInputSource.connect(this.gainNode);
+            this.externalInputType = 'microphone';
             
             console.log('Microphone connected');
         } catch (error) {
             console.error('Failed to connect microphone:', error);
         }
+    }
+    
+    async connectTabAudio() {
+        if (!this.isInitialized) await this.initialize();
+        await this.resumeContext();
+        
+        this.disconnectExternalInput();
+        
+        try {
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { width: 1, height: 1, frameRate: 1 },
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false,
+                    channelCount: 2
+                }
+            });
+            
+            if (stream.getAudioTracks().length === 0) {
+                console.warn('No audio track in stream');
+                stream.getTracks().forEach(t => t.stop());
+                return this.connectSystemLoopback();
+            }
+            
+            this.externalInputSource = this.audioContext.createMediaStreamSource(stream);
+            this.externalInputSource.connect(this.gainNode);
+            this.externalInputType = 'tab';
+            
+            stream.getAudioTracks().forEach(track => {
+                track.onended = () => {
+                    this.disconnectExternalInput();
+                    console.log('Tab audio disconnected');
+                };
+            });
+            
+            console.log('Tab audio connected via browser picker');
+            return true;
+        } catch (error) {
+            if (error.name === 'NotAllowedError') {
+                return false;
+            }
+            console.error('Tab audio error:', error);
+            return this.connectSystemLoopback();
+        }
+    }
+    
+    async connectSystemLoopback() {
+        this.disconnectExternalInput();
+        
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const audioInputs = devices.filter(d => d.kind === 'audioinput');
+            
+            const constraints = {
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false
+                }
+            };
+            
+            const loopbackDevice = audioInputs.find(d => {
+                const label = d.label.toLowerCase();
+                return label.includes('stereo mix') || 
+                       label.includes('wave out') || 
+                       label.includes('loopback') ||
+                       label.includes('what you hear') ||
+                       label.includes('mix') ||
+                       label.includes('virtual') ||
+                       label.includes('cable');
+            });
+            
+            if (loopbackDevice) {
+                constraints.audio.deviceId = loopbackDevice.deviceId;
+            }
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            
+            this.externalInputSource = this.audioContext.createMediaStreamSource(stream);
+            this.externalInputSource.connect(this.gainNode);
+            this.externalInputType = 'loopback';
+            
+            stream.getAudioTracks().forEach(track => {
+                track.onended = () => {
+                    this.disconnectExternalInput();
+                };
+            });
+            
+            console.log('System loopback audio connected');
+            return true;
+        } catch (error) {
+            console.error('Failed to connect system loopback:', error);
+            return false;
+        }
+    }
+    
+    disconnectTabAudio() {
+        this.disconnectExternalInput();
     }
     
     update() {
@@ -281,19 +390,18 @@ class AudioEngine {
     }
     
     destroy() {
-        // Close audio context
+        this.disconnectExternalInput();
+        
         if (this.audioContext && this.audioContext.state !== 'closed') {
             this.audioContext.close().catch(err => {
                 console.warn('Error closing AudioContext:', err);
             });
         }
         
-        // Disconnect source nodes
         if (this.sourceNode1) {
             try {
                 this.sourceNode1.disconnect();
             } catch (e) {
-                // Already disconnected
             }
             this.sourceNode1 = null;
         }
@@ -301,12 +409,10 @@ class AudioEngine {
             try {
                 this.sourceNode2.disconnect();
             } catch (e) {
-                // Already disconnected
             }
             this.sourceNode2 = null;
         }
         
-        // Clear references
         this.analyser = null;
         this.gainNode = null;
         this.crossfadeGain1 = null;

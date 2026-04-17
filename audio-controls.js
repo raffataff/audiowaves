@@ -40,6 +40,10 @@ class AudioControls {
         this._boundHandlers.mic = () => this.toggleMicrophone();
         document.getElementById('mic-input-btn').addEventListener('click', this._boundHandlers.mic);
 
+        // Tab audio input
+        this._boundHandlers.tabAudio = () => this.toggleTabAudio();
+        document.getElementById('tab-audio-btn').addEventListener('click', this._boundHandlers.tabAudio);
+
         // Audio events for progress updates
         this._boundHandlers.updateProgress = () => this.updateProgress();
         this.audioEngine.audioPlayer1.addEventListener('timeupdate', this._boundHandlers.updateProgress);
@@ -49,7 +53,6 @@ class AudioControls {
     async togglePlayPause() {
         const player = this.audioEngine.getCurrentPlayer();
         
-        /* @tweakable initial audio context resume on first play */
         const shouldResumeContext = true;
         if (shouldResumeContext) {
             await this.audioEngine.resumeContext();
@@ -133,6 +136,20 @@ class AudioControls {
         }
     }
 
+    async toggleTabAudio() {
+        const tabAudioBtn = document.getElementById('tab-audio-btn');
+        
+        if (tabAudioBtn.classList.contains('active')) {
+            this.audioEngine.disconnectTabAudio();
+            tabAudioBtn.classList.remove('active');
+        } else {
+            const success = await this.audioEngine.connectTabAudio();
+            if (success) {
+                tabAudioBtn.classList.add('active');
+            }
+        }
+    }
+
     formatTime(seconds) {
         // Use shared utility function when available
         return window.Utils ? window.Utils.formatTime(seconds) : this._formatTimeFallback(seconds);
@@ -183,6 +200,7 @@ class AudioControls {
         const muteBtn = document.getElementById('mute-btn');
         const progressSlider = document.getElementById('progress-slider');
         const micBtn = document.getElementById('mic-input-btn');
+        const tabAudioBtn = document.getElementById('tab-audio-btn');
 
         if (playPauseBtn && this._boundHandlers.playPause) {
             playPauseBtn.removeEventListener('click', this._boundHandlers.playPause);
@@ -210,6 +228,9 @@ class AudioControls {
         }
         if (micBtn && this._boundHandlers.mic) {
             micBtn.removeEventListener('click', this._boundHandlers.mic);
+        }
+        if (tabAudioBtn && this._boundHandlers.tabAudio) {
+            tabAudioBtn.removeEventListener('click', this._boundHandlers.tabAudio);
         }
         
         // Remove audio player event listeners

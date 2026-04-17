@@ -101,7 +101,6 @@ class PlaylistManager {
     render() {
         const container = document.getElementById('playlist-items');
         
-        /* @tweakable threshold for enabling virtual scrolling */
         const virtualScrollThreshold = 50;
         const useVirtualScrolling = this.playlist.length > virtualScrollThreshold;
         
@@ -117,7 +116,6 @@ class PlaylistManager {
         document.getElementById('playlist-duration').textContent = this.formatTime(totalDuration);
     }
 
-    /* @tweakable render full playlist for smaller lists */
     renderFull(container) {
         container.innerHTML = '';
         // Remove virtual scroll listener if it was added
@@ -132,9 +130,7 @@ class PlaylistManager {
         });
     }
 
-    /* @tweakable virtual scrolling for large playlists */
     renderVirtual(container) {
-        /* @tweakable item height for virtual scrolling calculations */
         const itemHeight = window.Utils?.APP_CONFIG?.PLAYLIST_ITEM_HEIGHT || 60;
         const bufferSize = 5; // Extra items to render above/below viewport
         
@@ -190,16 +186,13 @@ class PlaylistManager {
         }
     }
 
-    /* @tweakable create a single playlist item element */
     createPlaylistItem(track, index) {
         const item = document.createElement('div');
         item.className = 'playlist-item' + (index === this.currentTrackIndex ? ' playing' : '');
         
-        /* @tweakable whether to show delete button on currently playing track */
         const allowDeleteCurrentTrack = true;
         const showDeleteButton = allowDeleteCurrentTrack || index !== this.currentTrackIndex;
 
-        /* @tweakable drag handle visibility and style */
         const showDragHandle = true;
 
         // Build the item structure safely using DOM methods to prevent XSS
@@ -245,13 +238,11 @@ class PlaylistManager {
         
         item.appendChild(trackControls);
 
-        /* @tweakable playlist item tooltip for track information */
         // Use sanitized text for tooltip to prevent XSS
         const sanitizedTitle = this.sanitizeText(track.title);
         const sanitizedArtist = this.sanitizeText(track.artist);
         item.setAttribute('data-tooltip', `${sanitizedTitle} - ${sanitizedArtist} (${this.formatTime(track.duration)})`);
 
-        /* @tweakable enable draggable functionality for playlist items */
         const enableDragReorder = true;
         if (enableDragReorder) {
             item.draggable = true;
@@ -279,10 +270,8 @@ class PlaylistManager {
         return item;
     }
 
-    /* @tweakable drag and drop event handlers for playlist reordering */
     setupDragEvents(item) {
         item.addEventListener('dragstart', (e) => {
-            /* @tweakable drag operation visual feedback opacity */
             const dragOpacity = 0.5;
             
             item.style.opacity = dragOpacity;
@@ -303,7 +292,6 @@ class PlaylistManager {
                 e.preventDefault();
             }
             
-            /* @tweakable drag over visual feedback */
             const dragOverClass = 'drag-over';
             if (!item.classList.contains('dragging')) {
                 item.classList.add(dragOverClass);
@@ -340,7 +328,6 @@ class PlaylistManager {
         });
     }
 
-    /* @tweakable track reordering logic with current track index adjustment */
     reorderTrack(fromIndex, toIndex) {
         if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || 
             fromIndex >= this.playlist.length || toIndex >= this.playlist.length) {
@@ -365,12 +352,10 @@ class PlaylistManager {
             this.currentTrackIndex++;
         }
 
-        /* @tweakable immediate re-render after reorder to show updated positions */
         this.render();
         this.saveState();
     }
 
-    /* @tweakable clear drag visual feedback from all playlist items */
     clearDragVisualFeedback() {
         const playlistItems = document.querySelectorAll('.playlist-item');
         playlistItems.forEach(item => {
@@ -379,13 +364,11 @@ class PlaylistManager {
         });
     }
 
-    /* @tweakable whether to show confirmation dialog when removing tracks */
     removeTrack(index) {
         const showConfirmation = true;
         const track = this.playlist[index];
         
         if (showConfirmation) {
-            /* @tweakable confirmation message for track removal */
             const confirmMessage = `Remove "${track.title}" from playlist?`;
             if (!confirm(confirmMessage)) {
                 return;
@@ -407,7 +390,6 @@ class PlaylistManager {
             this.audioEngine.getCurrentPlayer().src = '';
             this.isPlaying = false;
             
-            /* @tweakable behavior when removing currently playing track */
             const autoPlayNext = true;
             if (autoPlayNext && this.playlist.length > 0) {
                 // Play the next track (or the one that takes its place)
@@ -548,15 +530,12 @@ class PlaylistManager {
     }
 
     clearPlaylist() {
-        /* @tweakable whether to stop playback when clearing playlist */
         const stopOnClear = true;
         if (stopOnClear) {
-            /* @tweakable reset audio players without disconnecting source nodes */
             // Pause both players
             this.audioEngine.audioPlayer1.pause();
             this.audioEngine.audioPlayer2.pause();
             
-            /* @tweakable whether to clear src when clearing playlist to release media resources */
             const clearSrc = true;
             if (clearSrc) {
                 // Clear the src to release resources, but keep source nodes connected
@@ -564,7 +543,6 @@ class PlaylistManager {
                 this.audioEngine.audioPlayer2.src = '';
             }
             
-            /* @tweakable reset audio player time positions to start */
             this.audioEngine.audioPlayer1.currentTime = 0;
             this.audioEngine.audioPlayer2.currentTime = 0;
 

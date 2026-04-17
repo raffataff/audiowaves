@@ -25,20 +25,16 @@ class ShaderEngine {
         this.currentPreset = null;
         this.presetParams = {};
         
-        /* @tweakable resize debounce delay in milliseconds */
         this.resizeDebounceDelay = 16;
         this.resizeTimeout = null;
         
-        /* @tweakable whether to preserve aspect ratio during resize */
         this.preserveAspectRatio = true;
         
-        /* @tweakable minimum canvas dimensions */
         this.minCanvasSize = { 
             width: config.MIN_CANVAS_WIDTH || 320, 
             height: config.MIN_CANVAS_HEIGHT || 240 
         };
         
-        /* @tweakable maximum canvas dimensions */
         this.maxCanvasSize = { 
             width: config.MAX_CANVAS_WIDTH || 4096, 
             height: config.MAX_CANVAS_HEIGHT || 4096 
@@ -111,7 +107,6 @@ class ShaderEngine {
     
     initialize() {
         try {
-            /* @tweakable whether to preserve drawing buffer for thumbnail capture */
             const preserveDrawingBuffer = true;
             
             this.gl = this.canvas.getContext('webgl2', {

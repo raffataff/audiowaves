@@ -1,8 +1,6 @@
-/* @tweakable notification animation duration in milliseconds */
 const NOTIFICATION_ANIMATION_DURATION = 300;
 
 class PresetNotifications {
-    /* @tweakable thumbnail capture success notification styling */
     showThumbnailCaptureNotification(duration) {
         // Remove progress indicator
         const progressNotification = document.getElementById('capture-progress');
@@ -50,7 +48,6 @@ class PresetNotifications {
         }, duration);
     }
 
-    /* @tweakable preset deletion success notification styling */
     showPresetDeleteNotification(presetName, duration) {
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -87,7 +84,6 @@ class PresetNotifications {
         }, duration);
     }
 
-    /* @tweakable shader export notification styling */
     showExportNotification(presetName, duration = 2000) {
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -122,7 +118,6 @@ class PresetNotifications {
         }, duration);
     }
 
-    /* @tweakable bulk export notification styling */
     showBulkExportNotification(count, duration = 2000) {
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -157,7 +152,6 @@ class PresetNotifications {
         }, duration);
     }
 
-    /* @tweakable shader import notification styling */
     showImportNotification(count, duration = 2000) {
         const notification = document.createElement('div');
         notification.style.cssText = `

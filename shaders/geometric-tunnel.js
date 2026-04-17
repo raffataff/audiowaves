@@ -9,8 +9,7 @@ class GeometricTunnelShader {
     }
 
     static getShaderCode() {
-        return `
-#version 300 es
+        return `#version 300 es
 precision highp float;
 
 uniform float u_time;

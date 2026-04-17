@@ -1,5 +1,4 @@
-/* @tweakable number of built-in presets that cannot be deleted for UI rendering */
-const BUILT_IN_PRESET_COUNT = 6;
+const BUILT_IN_PRESET_COUNT = ShaderDefinitions.shaderFiles.length;
 
 class PresetRenderer {
     constructor(presetManager) {
@@ -16,7 +15,6 @@ class PresetRenderer {
 
             const isCustomPreset = index >= BUILT_IN_PRESET_COUNT;
 
-            /* @tweakable preset tooltip with detailed information */
             const tooltipText = `${preset.name}${isCustomPreset ? ' (Custom)' : ' (Built-in)'}`;
             item.setAttribute('data-tooltip', tooltipText);
 
@@ -24,14 +22,17 @@ class PresetRenderer {
                 <img src="${preset.thumbnail}" alt="${preset.name}" class="preset-thumbnail">
                 <div class="preset-name">${preset.name}</div>
                 ${isCustomPreset ? `
+                    <button class="preset-rename-btn" data-index="${index}" data-tooltip="Rename shader">✏️</button>
                     <button class="preset-export-btn" data-index="${index}" data-tooltip="Export shader">📤</button>
                     <button class="preset-delete-btn" data-index="${index}" data-tooltip="Delete custom preset">✖</button>
                 ` : ''}
             `;
 
-            // Add click handler for preset selection (excluding delete button)
+            // Add click handler for preset selection (excluding action buttons)
             item.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('preset-delete-btn')) {
+                if (!e.target.classList.contains('preset-delete-btn') &&
+                    !e.target.classList.contains('preset-rename-btn') &&
+                    !e.target.classList.contains('preset-export-btn')) {
                     this.presetManager.selectPreset(index);
                 }
             });
@@ -42,6 +43,15 @@ class PresetRenderer {
                 exportBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     this.presetManager.exporter.exportShader(index);
+                });
+            }
+
+            // Add rename button handler for custom presets
+            const renameBtn = item.querySelector('.preset-rename-btn');
+            if (renameBtn) {
+                renameBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.presetManager.showRenameDialog(index);
                 });
             }
 
@@ -71,32 +81,45 @@ class PresetRenderer {
                 const group = document.createElement('div');
                 group.className = 'param-group';
 
-                /* @tweakable parameter slider range for generated shaders using correct control lookup */
                 const control = ShaderGeneratorControls.getAvailableControls().find(c => c.id === key);
                 const min = control?.min || 0;
                 const max = control?.max || 2;
                 const step = (max - min) > 2 ? 0.1 : 0.01;
 
-                /* @tweakable parameter tooltip with value and range information */
                 const tooltipText = `${this.formatParamName(key)}: ${value.toFixed(2)} (Range: ${min}-${max})`;
 
                 group.innerHTML = `
-                    <label class="param-label">${this.formatParamName(key)}</label>
-                    <input type="range" class="param-input" min="${min}" max="${max}" step="${step}" value="${value}" data-param="${key}" data-tooltip="${tooltipText}">
+                    <div class="param-row">
+                        <label class="param-label">${this.formatParamName(key)}</label>
+                        <div class="param-slider-container">
+                            <input type="range" class="param-input" min="${min}" max="${max}" step="${step}" value="${value}" data-param="${key}" data-tooltip="${tooltipText}">
+                            <input type="number" class="param-value-input" min="${min}" max="${max}" step="${step}" value="${value.toFixed(2)}" data-param="${key}">
+                        </div>
+                    </div>
                 `;
 
-                const input = group.querySelector('.param-input');
-                input.addEventListener('input', (e) => {
+                const slider = group.querySelector('.param-input');
+                const valueInput = group.querySelector('.param-value-input');
+                
+                slider.addEventListener('input', (e) => {
                     const newValue = parseFloat(e.target.value);
                     preset.params[key] = newValue;
-                    /* @tweakable update tooltip with new value */
+                    valueInput.value = newValue.toFixed(2);
                     const newTooltipText = `${this.formatParamName(key)}: ${e.target.value} (Range: ${min}-${max})`;
                     e.target.setAttribute('data-tooltip', newTooltipText);
-                    
-                    // FIX: Immediately propagate param change to shader engine
-                    // This ensures slider changes actually affect the rendered shader
                     this.presetManager.shaderEngine.setPresetParams(preset.params);
-                    
+                    this.presetManager.saveState();
+                });
+                
+                valueInput.addEventListener('change', (e) => {
+                    let newValue = parseFloat(e.target.value);
+                    newValue = Math.max(min, Math.min(max, newValue));
+                    preset.params[key] = newValue;
+                    slider.value = newValue;
+                    valueInput.value = newValue.toFixed(2);
+                    const newTooltipText = `${this.formatParamName(key)}: ${newValue.toFixed(2)} (Range: ${min}-${max})`;
+                    slider.setAttribute('data-tooltip', newTooltipText);
+                    this.presetManager.shaderEngine.setPresetParams(preset.params);
                     this.presetManager.saveState();
                 });
 
@@ -105,7 +128,6 @@ class PresetRenderer {
         }
     }
 
-    /* @tweakable parameter name formatting for display in UI */
     formatParamName(name) {
         return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
     }

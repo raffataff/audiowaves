@@ -1,25 +1,24 @@
-/* @tweakable storage key prefix for preset data persistence */
 const PRESET_STORAGE_KEY = 'spectral-nexus-presets';
 
 class PresetStorage {
-    /* @tweakable default thumbnail for custom shaders */
     getDefaultCustomThumbnail() {
         return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5DdXN0b208L3RleHQ+PC9zdmc+';
+    }
+
+    getBuiltInCount() {
+        return ShaderDefinitions ? ShaderDefinitions.shaderFiles.length : 6;
     }
 
     saveState(shaderPresets, currentPreset, extendedState = null) {
         const state = {
             currentPreset: currentPreset,
-            /* @tweakable save complete preset data including shader modifications */
             allPresets: shaderPresets.map(preset => ({
                 name: preset.name,
                 fragmentShader: preset.fragmentShader,
                 params: preset.params,
                 thumbnail: preset.thumbnail
             })),
-            /* @tweakable number of built-in presets to distinguish from custom ones */
-            builtInPresetCount: Math.min(6, shaderPresets.length),
-            /* @tweakable extended state for additional features like shuffle */
+            builtInPresetCount: this.getBuiltInCount(),
             extendedState: extendedState
         };
         localStorage.setItem(PRESET_STORAGE_KEY, JSON.stringify(state));
@@ -33,11 +32,12 @@ class PresetStorage {
 
                 let restoredPresets = ShaderDefinitions.getPresetShaders();
 
-                /* @tweakable restore all saved preset modifications including thumbnails */
                 if (state.allPresets && Array.isArray(state.allPresets)) {
+                    // Use CURRENT built-in count from shader files, not the saved one
+                    const currentBuiltInCount = this.getBuiltInCount();
+                    
                     // Restore built-in presets with any modifications
-                    const builtInCount = state.builtInPresetCount || 6;
-                    for (let i = 0; i < Math.min(builtInCount, restoredPresets.length); i++) {
+                    for (let i = 0; i < Math.min(currentBuiltInCount, restoredPresets.length); i++) {
                         if (state.allPresets[i]) {
                             // Only restore params that exist in the current shader definition
                             const currentParams = restoredPresets[i].params;
@@ -53,15 +53,15 @@ class PresetStorage {
                                 ...restoredPresets[i],
                                 fragmentShader: state.allPresets[i].fragmentShader || restoredPresets[i].fragmentShader,
                                 params: { ...currentParams, ...filteredParams },
-                                /* @tweakable restore custom thumbnails if available */
                                 thumbnail: state.allPresets[i].thumbnail || restoredPresets[i].thumbnail
                             };
                         }
                     }
 
-                    // Restore custom presets
-                    for (let i = builtInCount; i < state.allPresets.length; i++) {
-                        if (state.allPresets[i]) {
+                    // Restore custom presets (avoid duplicates by name)
+                    const existingNames = new Set(restoredPresets.map(p => p.name));
+                    for (let i = currentBuiltInCount; i < state.allPresets.length; i++) {
+                        if (state.allPresets[i] && !existingNames.has(state.allPresets[i].name)) {
                             restoredPresets.push({
                                 name: state.allPresets[i].name,
                                 fragmentShader: state.allPresets[i].fragmentShader,
@@ -75,7 +75,6 @@ class PresetStorage {
                 return {
                     currentPreset: state.currentPreset || 0,
                     shaderPresets: restoredPresets,
-                    /* @tweakable return extended state for additional features */
                     extendedState: state.extendedState
                 };
             }
@@ -86,9 +85,9 @@ class PresetStorage {
         return null;
     }
 
-    /* @tweakable get all custom presets for persistence */
     getCustomPresets(shaderPresets) {
-        return shaderPresets.slice(6).map(preset => ({
+        const builtInCount = this.getBuiltInCount();
+        return shaderPresets.slice(builtInCount).map(preset => ({
             name: preset.name,
             fragmentShader: preset.fragmentShader,
             params: preset.params,
@@ -97,7 +96,6 @@ class PresetStorage {
         }));
     }
 
-    /* @tweakable load custom presets from saved data */
     loadCustomPresets(customPresets, shaderPresets) {
         customPresets.forEach(preset => {
             shaderPresets.push({

@@ -1,4 +1,3 @@
-/* @tweakable custom dialog system that replaces native alert/confirm */
 
 class DialogManager {
     constructor() {

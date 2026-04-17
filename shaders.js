@@ -1,8 +1,6 @@
-/* @tweakable shader count for performance vs variety */
 const MAX_SHADER_PRESETS = 100;
 
 class ShaderDefinitions {
-    /* @tweakable add shader filenames here - names are auto-derived from filenames */
     static shaderFiles = [
         'barCode.js',
         'lattice.js',
@@ -10,7 +8,8 @@ class ShaderDefinitions {
         'liquid-chrome.js',
         'neural-network.js',
         'plasma-storm.js',
-        'geometric-tunnel.js'
+        'geometric-tunnel.js',
+        'frida.js'
     ];
 
     static filenameToClassName(filename) {
@@ -34,7 +33,6 @@ class ShaderDefinitions {
     }
 
     static getPresetShaders() {
-        /* @tweakable error checking for shader class availability before referencing */
         const availableShaders = [];
         
         this.shaderFiles.forEach(filename => {
@@ -56,7 +54,6 @@ class ShaderDefinitions {
             }
         });
         
-        /* @tweakable ensure at least one shader is available for fallback */
         if (availableShaders.length === 0) {
             console.error('No shader classes available, creating fallback shader');
             availableShaders.push({
@@ -70,7 +67,6 @@ class ShaderDefinitions {
         return availableShaders;
     }
     
-    /* @tweakable fallback shader for when other shaders fail to load */
     static getFallbackShader() {
         return `
             #version 300 es

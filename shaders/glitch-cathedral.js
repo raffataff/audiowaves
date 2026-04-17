@@ -1,16 +1,11 @@
-/* @tweakable energy vortex particle density multiplier */
 const ENERGY_VORTEX_PARTICLE_DENSITY = 1.0;
 
-/* @tweakable vortex rotation speed scaling factor */
 const ENERGY_VORTEX_ROTATION_SPEED = 1.0;
 
-/* @tweakable energy beam intensity multiplier */
 const ENERGY_VORTEX_BEAM_INTENSITY = 1.0;
 
-/* @tweakable core pulsation strength factor */
 const ENERGY_VORTEX_CORE_PULSE = 1.0;
 
-/* @tweakable fractal detail level multiplier */
 const ENERGY_VORTEX_FRACTAL_DETAIL = 1.0;
 
 class GlitchCathedralShader {
@@ -19,15 +14,10 @@ class GlitchCathedralShader {
             name: 'Energy Vortex',
             thumbnail: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9InZvcnRleCIgY3g9IjUwJSIgY3k9IjUwJSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmMDA4MCIvPjxzdG9wIG9mZnNldD0iMC41IiBzdG9wLWNvbG9yPSIjODBmZjAwIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDA4MGZmIi8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9InVybCgjdm9ydGV4KSIvPjwvc3ZnPg==',
             params: { 
-                /* @tweakable particle density for vortex effect */
                 particleDensity: ENERGY_VORTEX_PARTICLE_DENSITY, 
-                /* @tweakable vortex rotation speed */
                 rotationSpeed: ENERGY_VORTEX_ROTATION_SPEED,
-                /* @tweakable energy beam intensity */
                 beamIntensity: ENERGY_VORTEX_BEAM_INTENSITY,
-                /* @tweakable core pulsation strength */
                 corePulse: ENERGY_VORTEX_CORE_PULSE,
-                /* @tweakable fractal detail level */
                 fractalDetail: ENERGY_VORTEX_FRACTAL_DETAIL
             },
             fragmentShader: this.getShaderCode()
@@ -45,15 +35,10 @@ uniform float u_mid;
 uniform float u_treble;
 uniform float u_beat;
 uniform sampler2D u_prev_frame;
-/* @tweakable particle density for vortex effect */
 uniform float u_particleDensity;
-/* @tweakable vortex rotation speed */
 uniform float u_rotationSpeed;
-/* @tweakable energy beam intensity */
 uniform float u_beamIntensity;
-/* @tweakable core pulsation strength */
 uniform float u_corePulse;
-/* @tweakable fractal detail level */
 uniform float u_fractalDetail;
 
 out vec4 fragColor;

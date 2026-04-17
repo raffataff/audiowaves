@@ -1,4 +1,3 @@
-/* @tweakable UI management system for coordinating all interface components */
 class UIManager {
     constructor(audioEngine, shaderEngine) {
         this.audioEngine = audioEngine;
@@ -13,10 +12,8 @@ class UIManager {
         // Connect shader editor to preset manager
         this.shaderEditor.setPresetManager(this.presetManager);
 
-        /* @tweakable time in milliseconds before UI auto-hides on mouse inactivity */
         this.autoHideDelay = 6000;
         
-        /* @tweakable transition duration for UI show/hide animations */
         this.transitionDuration = 300;
         
         this.mouseInactivityTimer = null;
@@ -94,7 +91,6 @@ class UIManager {
         // Track file picker dialog state
         this.setupFilePickerTracking();
 
-        /* @tweakable whether to handle window resize in UI manager (handled by main.js now) */
         // Resize handling is delegated to main.js for proper canvas resizing
     }
 
@@ -130,13 +126,10 @@ class UIManager {
 
     setupDragAndDrop() {
         const dropZone = document.getElementById('drop-zone');
-        /* @tweakable playlist panel as a drop target for audio files */
         const playlistPanel = document.getElementById('playlist-panel');
         
-        /* @tweakable drag and drop visual feedback opacity */
         const dragOpacity = 0.9;
         
-        /* @tweakable drag and drop border animation duration in ms */
         const borderAnimationDuration = 300;
 
         // Store handlers for cleanup
@@ -183,11 +176,8 @@ class UIManager {
         this._boundHandlers.drop = dropHandler;
         document.addEventListener('drop', dropHandler, false);
 
-        /* @tweakable playlist panel drop zone styling and behavior */
         if (playlistPanel) {
-            /* @tweakable visual highlight color when dragging over playlist panel */
             const playlistHighlightColor = 'rgba(0, 255, 255, 0.2)';
-            /* @tweakable border highlight color for playlist drop area */
             const playlistBorderColor = 'rgba(0, 255, 255, 0.5)';
 
             // Prevent default on playlist panel
@@ -197,7 +187,6 @@ class UIManager {
 
             // Highlight playlist panel when dragging over it
             const playlistDragEnterHandler = (e) => {
-                /* @tweakable check if dragged items are files */
                 if (e.dataTransfer.types.includes('Files')) {
                     playlistPanel.style.backgroundColor = playlistHighlightColor;
                     playlistPanel.style.borderColor = playlistBorderColor;
@@ -208,7 +197,6 @@ class UIManager {
             playlistPanel.addEventListener('dragenter', playlistDragEnterHandler);
 
             const playlistDragOverHandler = (e) => {
-                /* @tweakable ensure files can be dropped by setting dropEffect */
                 if (e.dataTransfer.types.includes('Files')) {
                     e.dataTransfer.dropEffect = 'copy';
                     playlistPanel.style.backgroundColor = playlistHighlightColor;
@@ -219,7 +207,6 @@ class UIManager {
             playlistPanel.addEventListener('dragover', playlistDragOverHandler);
 
             const playlistDragLeaveHandler = (e) => {
-                /* @tweakable only remove highlight if leaving the panel completely */
                 if (e.target === playlistPanel || !playlistPanel.contains(e.relatedTarget)) {
                     playlistPanel.style.backgroundColor = '';
                     playlistPanel.style.borderColor = '';
@@ -229,7 +216,6 @@ class UIManager {
             playlistPanel.addEventListener('dragleave', playlistDragLeaveHandler);
 
             const playlistDropHandler = (e) => {
-                /* @tweakable handle file drop on playlist panel */
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 
@@ -237,11 +223,9 @@ class UIManager {
                     this.playlistManager.handleFileSelection(files);
                 }
 
-                /* @tweakable remove visual highlight after drop */
                 playlistPanel.style.backgroundColor = '';
                 playlistPanel.style.borderColor = '';
                 
-                /* @tweakable hide global drop zone when dropping on playlist */
                 dropZone.classList.add('hidden');
                 dropZone.style.opacity = '0';
             };
@@ -355,6 +339,7 @@ class UIManager {
         this.isUIVisible = true;
         const uiOverlay = document.getElementById('ui-overlay');
         uiOverlay.classList.remove('ui-hidden');
+        document.body.classList.remove('ui-hidden');
         uiOverlay.style.transition = `opacity ${this.transitionDuration}ms ease`;
     }
 
@@ -370,6 +355,7 @@ class UIManager {
         this.isUIVisible = false;
         const uiOverlay = document.getElementById('ui-overlay');
         uiOverlay.classList.add('ui-hidden');
+        document.body.classList.add('ui-hidden');
         uiOverlay.style.transition = `opacity ${this.transitionDuration}ms ease`;
     }
 
@@ -458,7 +444,6 @@ class UIManager {
             const initialPreset = this.presetManager.shaderPresets[this.presetManager.currentPreset];
             this.presetManager.loadPresetShader(initialPreset);
             
-            /* @tweakable delay to ensure shader compilation before setting parameters */
             setTimeout(() => {
                 this.shaderEngine.setPresetParams(initialPreset.params);
             }, 100);

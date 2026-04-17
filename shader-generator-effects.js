@@ -1,9 +1,6 @@
-/* @tweakable effect library for shader generation with expandable variations */
 class ShaderGeneratorEffects {
-    /* @tweakable maximum number of effect variations per category for variety */
     static MAX_VARIATIONS_PER_EFFECT = 10;
 
-    /* @tweakable get all available effect definitions with variations */
     static getAvailableEffects() {
         return [
             {
@@ -114,7 +111,6 @@ class ShaderGeneratorEffects {
         ];
     }
 
-    /* @tweakable helper functions for shader effects */
     static getHelperFunctions() {
         return `
         float random(vec2 st) {
@@ -1388,7 +1384,6 @@ class ShaderGeneratorEffects {
         return variations;
     }
 
-    /* @tweakable get effect code and selected variant name */
     static getEffectWithVariant(effectId) {
         const effects = this.getAvailableEffects();
         const effect = effects.find(e => e.id === effectId);
@@ -1410,7 +1405,6 @@ class ShaderGeneratorEffects {
         };
     }
 
-    /* @tweakable variant name arrays for each effect type */
     static getBioMathVariantNames() {
         return ['Xor Neural', 'Gyroid Lattice', 'Crystalline Lattice', 'Hypnotic Spiral', 'Alien Terrain', 'Digital Sphere', 'Orchard'];
     }

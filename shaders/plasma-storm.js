@@ -20,9 +20,7 @@ uniform float u_mid;
 uniform float u_treble;
 uniform float u_beat;
 uniform sampler2D u_prev_frame;
-/* @tweakable plasma storm intensity */
 uniform float u_intensity;
-/* @tweakable plasma turbulence amount */
 uniform float u_turbulence;
 
 out vec4 fragColor;

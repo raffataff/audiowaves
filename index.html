@@ -99,6 +99,7 @@
                     <div class="panel-controls">
                         <input type="file" id="file-input" multiple accept="audio/*" style="display: none;">
                         <button id="add-files-btn" class="icon-btn" data-tooltip="Add audio files">📁</button>
+                        <button id="tab-audio-btn" class="icon-btn" data-tooltip="Capture audio from other tabs/windows">🖥️</button>
                         <button id="mic-input-btn" class="icon-btn" data-tooltip="Use microphone input">🎤</button>
                         <button id="clear-playlist-btn" class="icon-btn" data-tooltip="Clear playlist">🗑️</button>
                     </div>
@@ -117,6 +118,7 @@
                 <div class="panel-header">
                     <h3>Shader Editor</h3>
                     <div class="panel-controls">
+                        <button id="save-shader-btn" class="icon-btn" data-tooltip="Save shader changes">💾</button>
                         <button id="compile-btn" class="icon-btn" data-tooltip="Compile and test shader">▶️</button>
                         <button id="close-editor-btn" class="icon-btn" data-tooltip="Close shader editor">✖️</button>
                     </div>
@@ -136,7 +138,7 @@
                         <button id="shuffle-shader-btn" class="icon-btn" data-tooltip="Toggle automatic shader switching" title="Shuffle is OFF - Click to enable">🎲</button>
                         <button id="capture-thumbnail-btn" class="icon-btn" data-tooltip="Capture current visual as thumbnail">📸</button>
                         <button id="edit-shader-btn" class="icon-btn" data-tooltip="Open shader editor">✏️</button>
-                        <button id="save-shader-btn" class="icon-btn" data-tooltip="Save shader changes">💾</button>
+                        
                         <button id="randomize-btn" class="icon-btn" data-tooltip="Randomize current shader parameters">🔄</button>
                         <button id="export-import-btn" class="icon-btn" data-tooltip="Export/Import shaders">📦</button>
                     </div>
@@ -185,6 +187,7 @@
     <script src="shaders/neural-network.js"></script>
     <script src="shaders/plasma-storm.js"></script>
     <script src="shaders/geometric-tunnel.js"></script>
+    <script src="shaders/frida.js"></script>
     <script src="shaders.js"></script>
     <script src="blend-shaders.js"></script>
     <script src="audio-engine.js"></script>

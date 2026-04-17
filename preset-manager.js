@@ -1,11 +1,9 @@
-/* @tweakable default transition duration for shader blending in milliseconds */
 const DEFAULT_TRANSITION_DURATION = 2500;
 
 class PresetManager {
     constructor(shaderEngine) {
         this.shaderEngine = shaderEngine;
         
-        /* @tweakable number of presets to load on startup */
         this.maxPresets = MAX_SHADER_PRESETS;
         
         this.shaderPresets = ShaderDefinitions.getPresetShaders();
@@ -16,12 +14,9 @@ class PresetManager {
         this.renderer = new PresetRenderer(this);
         this.thumbnailCapture = new ThumbnailCapture(this, this.shaderEngine);
         this.notifications = new PresetNotifications();
-        /* @tweakable shader generator integration */
         this.shaderGenerator = new ShaderGenerator(this);
-        /* @tweakable shader exporter integration */
         this.exporter = new ShaderExporter(this);
 
-        /* @tweakable initialize transition and shuffle management modules */
         this.transitions = new PresetTransitions(this);
         this.shuffle = new PresetShuffle(this);
 
@@ -32,9 +27,7 @@ class PresetManager {
     setupEventListeners() {
         document.getElementById('randomize-btn').addEventListener('click', () => this.randomizePreset());
         document.getElementById('capture-thumbnail-btn').addEventListener('click', () => this.thumbnailCapture.captureThumbnail());
-        /* @tweakable shuffle shader button event listener using extracted module */
         document.getElementById('shuffle-shader-btn').addEventListener('click', () => this.shuffle.toggleShaderShuffle());
-        /* @tweakable export/import button event listener */
         document.getElementById('export-import-btn').addEventListener('click', () => this.exporter.showExportImportDialog());
     }
 
@@ -52,7 +45,6 @@ class PresetManager {
         this.selectPresetWithTransition(index);
     }
 
-    /* @tweakable preset selection with blend transition using extracted module */
     selectPresetWithTransition(index) {
         if (index === this.currentPreset || this.transitions.isTransitioning) return;
         
@@ -60,7 +52,6 @@ class PresetManager {
         this.transitions.startTransition(this.currentPreset, index);
     }
 
-    /* @tweakable instant preset selection without transition */
     selectPresetInstant(index) {
         this.currentPreset = index;
         this.render();
@@ -71,7 +62,6 @@ class PresetManager {
             const preset = this.shaderPresets[index];
             this.loadPresetShader(preset);
             
-            /* @tweakable immediate parameter application after shader loading */
             setTimeout(() => {
                 this.shaderEngine.setPresetParams(preset.params);
             }, 50);
@@ -84,12 +74,10 @@ class PresetManager {
         }
     }
 
-    /* @tweakable expose transition update method for external calls */
     updateTransition() {
         this.transitions.updateTransition();
     }
 
-    /* @tweakable expose transition state for external checks */
     get isTransitioning() {
         return this.transitions.isTransitioning;
     }
@@ -129,7 +117,6 @@ class PresetManager {
         if (this.currentPreset >= 0 && this.currentPreset < this.shaderPresets.length) {
             const preset = this.shaderPresets[this.currentPreset];
             
-            /* @tweakable randomization range for shader parameters */
             const randomRange = 2.0;
             
             Object.keys(preset.params).forEach(key => {
@@ -141,7 +128,6 @@ class PresetManager {
     }
 
     saveState() {
-        /* @tweakable save shuffle state using extracted module */
         const extendedState = this.shuffle.getState();
         this.storage.saveState(this.shaderPresets, this.currentPreset, extendedState);
     }
@@ -152,7 +138,6 @@ class PresetManager {
             this.currentPreset = state.currentPreset || 0;
             this.shaderPresets = state.shaderPresets || this.shaderPresets;
             
-            /* @tweakable restore shuffle state using extracted module */
             if (state.extendedState) {
                 this.shuffle.setState(state.extendedState);
             }
@@ -170,7 +155,6 @@ class PresetManager {
         if (index >= 0 && index < this.shaderPresets.length) {
             this.shaderPresets[index].fragmentShader = shaderCode;
             
-            /* @tweakable immediate save after shader modification to ensure persistence */
             this.saveState();
             
             // Reload the shader if it's the current one
@@ -180,9 +164,7 @@ class PresetManager {
         }
     }
 
-    /* @tweakable enhanced preset creation with custom parameters */
     addNewPreset(name, shaderCode, customParams = null) {
-        /* @tweakable default parameters for new custom presets */
         const defaultParams = customParams || {};
         
         const newPreset = {
@@ -195,7 +177,6 @@ class PresetManager {
         this.shaderPresets.push(newPreset);
         this.render();
         
-        /* @tweakable immediate save after adding new preset to ensure persistence */
         this.saveState();
         
         // Select the new preset
@@ -203,8 +184,7 @@ class PresetManager {
     }
 
     removePreset(index) {
-        /* @tweakable minimum number of built-in presets that must remain */
-        const builtInPresetCount = 6;
+        const builtInPresetCount = ShaderDefinitions ? ShaderDefinitions.shaderFiles.length : 6;
         
         if (index < builtInPresetCount) {
             const warningMessage = 'Built-in presets cannot be deleted.';
@@ -237,5 +217,71 @@ class PresetManager {
         
         const notificationDuration = 2000;
         this.notifications.showPresetDeleteNotification(preset.name, notificationDuration);
+    }
+
+    showRenameDialog(index) {
+        const preset = this.shaderPresets[index];
+        
+        const backdrop = document.createElement('div');
+        backdrop.className = 'rename-dialog-backdrop';
+        
+        const dialog = document.createElement('div');
+        dialog.className = 'rename-dialog';
+        
+        dialog.innerHTML = `
+            <div class="rename-dialog-header">
+                <h3>Rename Shader</h3>
+                <button class="rename-dialog-close">&times;</button>
+            </div>
+            <div class="rename-dialog-body">
+                <input type="text" class="rename-input" value="${preset.name}" placeholder="Enter new name">
+            </div>
+            <div class="rename-dialog-footer">
+                <button class="rename-btn cancel">Cancel</button>
+                <button class="rename-btn confirm">Rename</button>
+            </div>
+        `;
+        
+        backdrop.appendChild(dialog);
+        document.body.appendChild(backdrop);
+        
+        requestAnimationFrame(() => {
+            backdrop.classList.add('visible');
+            dialog.classList.add('visible');
+            dialog.querySelector('.rename-input').select();
+        });
+        
+        const closeDialog = () => {
+            backdrop.classList.remove('visible');
+            dialog.classList.remove('visible');
+            setTimeout(() => {
+                if (backdrop.parentNode) document.body.removeChild(backdrop);
+            }, 200);
+        };
+        
+        dialog.querySelector('.rename-dialog-close').addEventListener('click', closeDialog);
+        dialog.querySelector('.rename-btn.cancel').addEventListener('click', closeDialog);
+        
+        dialog.querySelector('.rename-btn.confirm').addEventListener('click', () => {
+            const newName = dialog.querySelector('.rename-input').value.trim();
+            if (newName && newName !== preset.name) {
+                preset.name = newName;
+                this.render();
+                this.saveState();
+            }
+            closeDialog();
+        });
+        
+        dialog.querySelector('.rename-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                dialog.querySelector('.rename-btn.confirm').click();
+            } else if (e.key === 'Escape') {
+                closeDialog();
+            }
+        });
+        
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) closeDialog();
+        });
     }
 }

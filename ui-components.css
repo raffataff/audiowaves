@@ -1,4 +1,3 @@
-/* @tweakable UI component styles extracted from main stylesheet */
 
 /* --- CONTROL BUTTONS --- */
 .control-btn {
@@ -231,7 +230,6 @@ input[type="text"]:focus {
     transform: scale(1.2);
 }
 
-/* @tweakable preset export button styling */
 .preset-export-btn {
     position: absolute;
     top: 4px;
@@ -254,8 +252,30 @@ input[type="text"]:focus {
     transform: scale(1.2);
 }
 
-/* @tweakable show export and delete buttons on preset hover */
-.preset-item:hover .preset-export-btn {
+.preset-rename-btn {
+    position: absolute;
+    top: 4px;
+    right: 48px;
+    background: rgba(255, 200, 100, 0.8);
+    border: 1px solid rgba(255, 200, 100, 1);
+    border-radius: 4px;
+    color: white;
+    font-size: 10px;
+    padding: 2px 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    transform: scale(0.8);
+    z-index: 10;
+}
+
+.preset-rename-btn:hover {
+    background: rgba(255, 180, 50, 1);
+    transform: scale(1.2);
+}
+
+.preset-item:hover .preset-export-btn,
+.preset-item:hover .preset-rename-btn {
     opacity: 1;
     transform: scale(1);
 }

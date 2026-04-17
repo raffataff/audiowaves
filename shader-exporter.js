@@ -1,19 +1,14 @@
-/* @tweakable shader export/import functionality for permanent storage */
 class ShaderExporter {
     constructor(presetManager) {
         this.presetManager = presetManager;
-        /* @tweakable built-in preset count - shaders before this index are considered built-in */
-        this.builtInPresetCount = 10;
-        /* @tweakable whether to use File System Access API for choosing save location */
+        this.builtInPresetCount = ShaderDefinitions ? ShaderDefinitions.shaderFiles.length : 6;
         this.useFilePicker = true;
     }
 
-    /* @tweakable check if File System Access API is supported */
     isFilePickerSupported() {
         return this.useFilePicker && 'showSaveFilePicker' in window;
     }
 
-    /* @tweakable convert preset name to valid JavaScript class name */
     toClassName(name) {
         return name
             .replace(/[^a-zA-Z0-9\s]/g, '')
@@ -22,7 +17,6 @@ class ShaderExporter {
             .join('');
     }
 
-    /* @tweakable convert preset name to valid JavaScript file name */
     toFileName(name) {
         return name
             .toLowerCase()
@@ -30,7 +24,6 @@ class ShaderExporter {
             .replace(/\s+/g, '-');
     }
 
-    /* @tweakable generate shader class code from preset data */
     generateShaderClass(preset) {
         const className = this.toClassName(preset.name);
         const params = preset.params || {};
@@ -57,15 +50,15 @@ class ${className}Shader {
     static getShaderCode() {
         return \`${preset.fragmentShader}\`;
     }
-}`;
+}
+window['${className}Shader'] = ${className}Shader;
+`;
     }
 
-    /* @tweakable get default thumbnail for exported shaders */
     getDefaultThumbnail() {
         return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5DdXN0b208L3RleHQ+PC9zdmc+';
     }
 
-    /* @tweakable save file using File System Access API with user-chosen location */
     async saveWithFilePicker(content, suggestedName, mimeType = 'text/plain') {
         try {
             const options = {
@@ -98,7 +91,6 @@ class ${className}Shader {
         }
     }
 
-    /* @tweakable export a single shader as .js file with save location picker */
     async exportShader(presetIndex) {
         const preset = this.presetManager.shaderPresets[presetIndex];
         if (!preset) {
@@ -129,7 +121,6 @@ class ${className}Shader {
         }
     }
 
-    /* @tweakable export all custom shaders as a single JSON backup file with save location picker */
     async exportAllCustomShaders() {
         const customPresets = this.presetManager.shaderPresets
             .slice(this.builtInPresetCount)
@@ -176,7 +167,6 @@ class ${className}Shader {
         }
     }
 
-    /* @tweakable export all custom shaders as individual .js files in a zip-like structure */
     exportAllAsJsFiles() {
         const customPresets = this.presetManager.shaderPresets.slice(this.builtInPresetCount);
 
@@ -200,7 +190,6 @@ class ${className}Shader {
         }, delay + 100);
     }
 
-    /* @tweakable show instructions for making shaders permanent */
     showExportInstructions(count) {
         const instructions = `
 📦 ${count} shader${count > 1 ? 's' : ''} exported!
@@ -220,7 +209,6 @@ To make these shaders PERMANENT:
         alert(instructions);
     }
 
-    /* @tweakable import shaders from JSON backup file */
     async importFromJson(file) {
         try {
             const text = await file.text();
@@ -255,7 +243,6 @@ To make these shaders PERMANENT:
         }
     }
 
-    /* @tweakable trigger file download */
     downloadFile(fileName, content, mimeType = 'text/plain') {
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
@@ -268,7 +255,6 @@ To make these shaders PERMANENT:
         URL.revokeObjectURL(url);
     }
 
-    /* @tweakable show export/import dialog */
     showExportImportDialog() {
         const dialog = document.createElement('div');
         dialog.className = 'shader-export-dialog';
@@ -357,7 +343,6 @@ To make these shaders PERMANENT:
         });
     }
 
-    /* @tweakable close export dialog */
     closeDialog(dialog) {
         dialog.classList.remove('visible');
         setTimeout(() => {

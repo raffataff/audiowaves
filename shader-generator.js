@@ -1,19 +1,14 @@
-/* @tweakable maximum number of effects that can be combined in a generated shader */
 const MAX_SHADER_EFFECTS = 5;
 
-/* @tweakable maximum number of control sliders that can be added to a generated shader */
 const MAX_SHADER_CONTROLS = 12;
 
-/* @tweakable default shader generation template base intensity */
 const DEFAULT_GENERATION_INTENSITY = 1.0;
 
-/* @tweakable refactored shader generator main coordination class */
 class ShaderGenerator {
     constructor(presetManager) {
         this.presetManager = presetManager;
         this.isFormVisible = false;
 
-        /* @tweakable initialize specialized generator modules */
         this.ui = new ShaderGeneratorUI(this);
         
         // Preview state
@@ -37,7 +32,6 @@ class ShaderGenerator {
         document.getElementById('add-shader-btn').addEventListener('click', () => this.showGeneratorForm());
     }
 
-    /* @tweakable show shader generator form using extracted UI module */
     showGeneratorForm() {
         if (this.isFormVisible) return;
         this.isFormVisible = true;
@@ -58,7 +52,6 @@ class ShaderGenerator {
         }, 10);
     }
 
-    /* @tweakable shader preview functionality using extracted compiler */
     previewShader(shaderData, modal) {
         const shaderCode = ShaderGeneratorCompiler.generateShaderCode(shaderData);
         
@@ -92,7 +85,6 @@ class ShaderGenerator {
         }, 100);
     }
     
-    /* @tweakable initialize WebGL context for preview */
     initPreviewWebGL(fragmentSource, modal) {
         try {
             // Get or create preview canvas
@@ -233,7 +225,6 @@ class ShaderGenerator {
         }
     }
     
-    /* @tweakable start the preview render loop */
     startPreviewRenderLoop() {
         if (this.previewAnimationId) {
             cancelAnimationFrame(this.previewAnimationId);
@@ -289,7 +280,6 @@ class ShaderGenerator {
         render();
     }
     
-    /* @tweakable stop the preview render loop */
     stopPreview() {
         if (this.previewAnimationId) {
             cancelAnimationFrame(this.previewAnimationId);
@@ -309,7 +299,6 @@ class ShaderGenerator {
         this.previewUniforms = {};
     }
 
-    /* @tweakable shader generation using extracted compiler and controls */
     generateShader(shaderData) {
         let shaderCode;
         

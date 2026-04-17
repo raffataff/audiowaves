@@ -1,6 +1,4 @@
-/* @tweakable modal and dialog styles extracted from main stylesheet */
 
-/* @tweakable save dialog backdrop and positioning */
 .save-dialog {
     position: fixed;
     top: 0;
@@ -16,7 +14,6 @@
     transition: opacity 300ms ease;
 }
 
-/* @tweakable save dialog content container styling */
 .save-dialog-content {
     background: rgba(20, 20, 30, 0.95);
     backdrop-filter: blur(20px);
@@ -37,7 +34,6 @@
     font-weight: 600;
 }
 
-/* @tweakable save options button layout */
 .save-options {
     display: flex;
     flex-direction: column;
@@ -45,7 +41,6 @@
     margin-bottom: 16px;
 }
 
-/* @tweakable save button styling with hover effects */
 .save-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -64,7 +59,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* @tweakable overwrite button distinctive styling */
 .save-btn.overwrite {
     background: rgba(255, 165, 0, 0.3);
     border-color: rgba(255, 165, 0, 0.6);
@@ -74,7 +68,6 @@
     background: rgba(255, 165, 0, 0.4);
 }
 
-/* @tweakable new preset button distinctive styling */
 .save-btn.new {
     background: rgba(0, 255, 255, 0.3);
     border-color: rgba(0, 255, 255, 0.6);
@@ -84,7 +77,6 @@
     background: rgba(0, 255, 255, 0.4);
 }
 
-/* @tweakable confirm button styling */
 .save-btn.confirm {
     background: rgba(0, 255, 0, 0.3);
     border-color: rgba(0, 255, 0, 0.6);
@@ -94,7 +86,6 @@
     background: rgba(0, 255, 0, 0.4);
 }
 
-/* @tweakable cancel button styling */
 .save-btn.cancel {
     background: rgba(255, 100, 100, 0.3);
     border-color: rgba(255, 100, 100, 0.6);
@@ -112,7 +103,6 @@
     display: none;
 }
 
-/* @tweakable form buttons layout in new preset form */
 .form-buttons {
     display: flex;
     gap: 8px;
@@ -121,7 +111,6 @@
 }
 
 /* Shader Generator Modal */
-/* @tweakable shader generator modal backdrop styling */
 .shader-generator-modal {
     position: fixed;
     top: 0;
@@ -140,7 +129,6 @@
     box-sizing: border-box;
 }
 
-/* @tweakable shader generator form container styling */
 .generator-form {
     background: rgba(20, 20, 30, 0.95);
     backdrop-filter: blur(20px);
@@ -158,7 +146,6 @@
     flex-direction: column;
 }
 
-/* @tweakable form content wrapper for side-by-side layout */
 .form-content-wrapper {
     display: flex;
     gap: 12px;
@@ -177,7 +164,6 @@
     padding-right: 12px;
 }
 
-/* @tweakable preview panel styling */
 .preview-panel {
     width: 600px;
     min-width:450px;
@@ -385,7 +371,6 @@
     gap: 12px;
 }
 
-/* @tweakable section label styling for form sections */
 .section-label {
     font-size: 16px;
     font-weight: 500;
@@ -393,14 +378,12 @@
     margin-bottom: 8px;
 }
 
-/* @tweakable effect selection grid layout */
 .effects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
 }
 
-/* @tweakable control selection grid layout */
 .controls-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -417,7 +400,6 @@
     position: relative;
 }
 
-/* @tweakable effect order indicator styling */
 .effect-order-indicator {
     position: absolute;
     top: -8px;
@@ -467,7 +449,6 @@
     transition: all 0.2s ease;
 }
 
-/* @tweakable effect/control name styling */
 .effect-name, .control-name {
     font-size: 14px;
     font-weight: 500;
@@ -476,14 +457,12 @@
     border-bottom: #00eeff63 1px dashed;
 }
 
-/* @tweakable effect/control description styling */
 .effect-description, .control-description {
     font-size: 12px;
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.3;
 }
 
-/* @tweakable color palette selection dropdown styling */
 .palette-select {
     padding: 6px 12px;
     background: rgba(255, 255, 255, 0.1);
@@ -499,7 +478,6 @@
     color: white;
 }
 
-/* @tweakable shader name input styling */
 .shader-name-input {
     padding: 6px 12px;
     background: rgba(255, 255, 255, 0.1);
@@ -536,13 +514,11 @@
     transform: translateY(-1px);
 }
 
-/* @tweakable preview button unique styling */
 .preview-btn {
     background: rgba(255, 165, 0, 0.3);
     border-color: rgba(255, 165, 0, 0.6);
 }
 
-/* @tweakable generate button unique styling */
 .generate-btn {
     background: rgba(0, 255, 255, 0.3);
     border-color: rgba(0, 255, 255, 0.6);
@@ -581,7 +557,6 @@
     color: #00ffff;
 }
 
-/* @tweakable responsive design for shader generator on mobile */
 @media (max-width: 768px) {
     .generator-form {
         width: 95vw;
@@ -602,7 +577,6 @@
     }
 }
 
-/* @tweakable shader export/import dialog styling */
 .shader-export-dialog {
     position: fixed;
     top: 0;
@@ -757,4 +731,128 @@
     color: rgba(100, 255, 100, 0.9);
     margin: 8px 0 0 0;
     min-height: 20px;
+}
+
+/* Rename Dialog */
+.rename-dialog-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+.rename-dialog-backdrop.visible {
+    opacity: 1;
+}
+
+.rename-dialog {
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 0;
+    min-width: 320px;
+    max-width: 90vw;
+    transform: scale(0.9);
+    transition: transform 200ms ease;
+}
+
+.rename-dialog.visible {
+    transform: scale(1);
+}
+
+.rename-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rename-dialog-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.rename-dialog-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.rename-dialog-close:hover {
+    color: #fff;
+}
+
+.rename-dialog-body {
+    padding: 20px;
+}
+
+.rename-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.rename-input:focus {
+    border-color: rgba(0, 255, 255, 0.5);
+}
+
+.rename-dialog-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rename-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rename-btn.cancel {
+    background: rgba(255, 100, 100, 0.2);
+    border: 1px solid rgba(255, 100, 100, 0.4);
+    color: #ff6464;
+}
+
+.rename-btn.cancel:hover {
+    background: rgba(255, 100, 100, 0.4);
+}
+
+.rename-btn.confirm {
+    background: rgba(0, 255, 255, 0.2);
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    color: #00ffff;
+}
+
+.rename-btn.confirm:hover {
+    background: rgba(0, 255, 255, 0.4);
 }

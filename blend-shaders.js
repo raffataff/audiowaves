@@ -1,7 +1,5 @@
-/* @tweakable number of available blend modes for variety */
 const BLEND_MODE_COUNT = 8;
 
-/* @tweakable transition smoothness factor */
 const TRANSITION_SMOOTHNESS = 4.0;
 
 class BlendShaders {

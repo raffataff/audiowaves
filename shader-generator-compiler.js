@@ -1,4 +1,3 @@
-/* @tweakable shader code compilation and generation functionality */
 class ShaderGeneratorCompiler {
     static TRANSITION_SMOOTHNESS = 2.0;
     static DEFAULT_GENERATION_INTENSITY = 1.0;

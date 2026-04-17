@@ -56,6 +56,11 @@ body {
     transform: translateY(-10px);
 }
 
+/* Hide cursor when UI is auto-hidden */
+body.ui-hidden {
+    cursor: none;
+}
+
 /* Basic Panel Layout */
 .panel {
     background: rgba(20, 20, 30, 0.8);
@@ -381,7 +386,6 @@ body {
     border-color: rgba(0, 255, 255, 0.3);
 }
 
-/* @tweakable drag handle styling for playlist items */
 .drag-handle {
     color: rgba(255, 255, 255, 0.4);
     cursor: grab;
@@ -400,14 +404,12 @@ body {
     cursor: grabbing;
 }
 
-/* @tweakable drag over visual feedback styling */
 .playlist-item.drag-over {
     background: rgba(0, 255, 255, 0.15);
     border-color: rgba(0, 255, 255, 0.3);
     transform: translateY(-2px);
 }
 
-/* @tweakable dragging state visual feedback */
 .playlist-item.dragging {
     opacity: 0.5;
     transform: rotate(3deg);
@@ -447,7 +449,6 @@ body {
     opacity: 0.8;
 }
 
-/* @tweakable track delete button hover animation */
 .playlist-item:hover .track-delete-btn {
     opacity: 1;
     transform: scale(1);
@@ -506,14 +507,13 @@ body {
     text-overflow: ellipsis;
 }
 
-/* @tweakable preset delete button visibility animation */
 .preset-item:hover .preset-delete-btn {
     opacity: 1;
     transform: scale(1);
 }
 
 .preset-params {
-    padding: 8px;
+    padding: 5px;
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.3);
     max-height: 100%;
@@ -525,14 +525,48 @@ body {
 }
 
 .param-group {
-    margin-bottom: 12px;
+    margin-bottom: 2px;
+}
+
+.param-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
 }
 
 .param-label {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 0px;
     font-size: 11px;
     opacity: 0.8;
+    letter-spacing: 1px;
+}
+
+.param-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.param-slider-container .param-input {
+    flex: 1;
+}
+
+.param-value-input {
+    width: 60px;
+    padding: 4px 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: white;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+}
+
+.param-value-input:focus {
+    outline: none;
+    border-color: rgba(0, 255, 255, 0.6);
 }
 
 /* Editor Panel - Now vertical on the right */

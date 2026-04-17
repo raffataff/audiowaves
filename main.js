@@ -1,12 +1,9 @@
 class TooltipManager {
     constructor() {
-        /* @tweakable tooltip display delay in milliseconds */
         this.showDelay = 500;
         
-        /* @tweakable tooltip hide delay in milliseconds */
         this.hideDelay = 100;
         
-        /* @tweakable tooltip positioning offset from element */
         this.offset = 8;
         
         this.currentTooltip = null;
@@ -26,7 +23,6 @@ class TooltipManager {
     }
     
     init() {
-        /* @tweakable use passive event listeners for better performance */
         const usePassive = true;
         const eventOptions = usePassive ? { passive: true } : false;
         
@@ -41,7 +37,6 @@ class TooltipManager {
         document.addEventListener('mouseout', this._boundHandlers.mouseout, eventOptions);
         document.addEventListener('mousemove', this._boundHandlers.mousemove, eventOptions);
         
-        /* @tweakable hide tooltips when scrolling for better UX */
         document.addEventListener('scroll', this._boundHandlers.scroll, eventOptions);
         window.addEventListener('resize', this._boundHandlers.resize, eventOptions);
     }
@@ -74,7 +69,6 @@ class TooltipManager {
         
         this.clearTimeouts();
         
-        /* @tweakable tooltip show delay for better user experience */
         this.showTimeout = setTimeout(() => {
             this.showTooltip(element, element.dataset.tooltip);
         }, this.showDelay);
@@ -86,7 +80,6 @@ class TooltipManager {
         
         this.clearTimeouts();
         
-        /* @tweakable tooltip hide delay to prevent flickering */
         this.hideTimeout = setTimeout(() => {
             this.hideTooltip();
         }, this.hideDelay);
@@ -94,7 +87,6 @@ class TooltipManager {
     
     handleMouseMove(e) {
         if (this.currentTooltip) {
-            /* @tweakable whether tooltips should follow mouse cursor */
             const followMouse = false;
             if (followMouse) {
                 this.positionTooltip(this.currentTooltip, e.pageX, e.pageY);
@@ -102,7 +94,6 @@ class TooltipManager {
         }
     }
     
-    /* @tweakable tooltip creation and positioning logic */
     showTooltip(element, text) {
         this.hideTooltip();
         
@@ -122,7 +113,6 @@ class TooltipManager {
         }, 10);
     }
     
-    /* @tweakable smart tooltip positioning based on viewport */
     positionTooltipRelativeToElement(tooltip, element) {
         const rect = element.getBoundingClientRect();
         const tooltipRect = tooltip.getBoundingClientRect();
@@ -130,7 +120,6 @@ class TooltipManager {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         
-        /* @tweakable preferred tooltip position (bottom by default) */
         let position = 'bottom';
         let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
         let top = rect.bottom + this.offset;
@@ -151,7 +140,6 @@ class TooltipManager {
             top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
         }
         
-        /* @tweakable ensure tooltip stays within viewport bounds */
         if (position === 'left' || position === 'right') {
             top = Math.max(this.offset, Math.min(top, viewportHeight - tooltipRect.height - this.offset));
         } else {
@@ -173,7 +161,6 @@ class TooltipManager {
         if (this.currentTooltip) {
             this.currentTooltip.classList.remove('visible');
             
-            /* @tweakable tooltip removal delay for smooth animation */
             setTimeout(() => {
                 if (this.currentTooltip && this.currentTooltip.parentNode) {
                     document.body.removeChild(this.currentTooltip);
@@ -449,7 +436,6 @@ class SpectralNexus {
         this.shaderEngine = new ShaderEngine(this.canvas);
         this.uiManager = new UIManager(this.audioEngine, this.shaderEngine);
         
-        /* @tweakable initialize tooltip manager for UI guidance */
         this.tooltipManager = new TooltipManager();
         
         this.isRunning = false;
@@ -506,7 +492,6 @@ class SpectralNexus {
     }
     
     handleResize() {
-        /* @tweakable whether to debounce resize events to reduce processing load */
         const useDebouncing = true;
         
         if (useDebouncing) {
@@ -551,7 +536,6 @@ class SpectralNexus {
         this.audioEngine.update();
         const audioData = this.audioEngine.getAudioData();
         
-        /* @tweakable update transition progress during render loop */
         if (this.uiManager.presetManager.isTransitioning) {
             this.uiManager.presetManager.updateTransition();
         }

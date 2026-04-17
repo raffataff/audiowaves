@@ -3,7 +3,6 @@
  * This module consolidates common functionality to reduce code duplication
  */
 
-/* @tweakable configuration constants */
 const APP_CONFIG = {
     // Audio Engine Settings
     AUDIO_FFT_SIZE: 1024,

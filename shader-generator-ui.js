@@ -1,19 +1,15 @@
-/* @tweakable UI form generation and management for shader generator */
 class ShaderGeneratorUI {
     constructor(shaderGenerator) {
         this.shaderGenerator = shaderGenerator;
         
-        /* @tweakable maximum number of effects that can be combined in UI */
         this.maxEffects = 5;
         
-        /* @tweakable form animation timing for smooth transitions */
-        this.animationDuration = 600;
+        this.animationDuration = 1000;
         
         /* Track the order in which effects are selected */
         this.effectSelectionOrder = [];
     }
 
-    /* @tweakable create complete HTML form for shader generation */
     createFormHTML() {
         const availableEffects = ShaderGeneratorEffects.getAvailableEffects();
         const availableControls = ShaderGeneratorControls.getAvailableControls();
@@ -80,7 +76,6 @@ class ShaderGeneratorUI {
         `;
     }
 
-    /* @tweakable generate HTML for effect selection options */
     generateEffectOptions(effects) {
         return effects.map(effect => `
             <div class="effect-option" data-effect="${effect.id}">
@@ -94,7 +89,6 @@ class ShaderGeneratorUI {
         `).join('');
     }
 
-    /* @tweakable generate HTML for control parameter options */
     generateControlOptions(controls) {
         return controls.map(control => `
             <div class="control-option" data-control="${control.id}">
@@ -107,7 +101,6 @@ class ShaderGeneratorUI {
         `).join('');
     }
 
-    /* @tweakable setup form event listeners and interaction handling */
     setupFormEventListeners(modal) {
         const closeBtn = modal.querySelector('#close-generator');
         const generateBtn = modal.querySelector('#generate-shader');
@@ -133,7 +126,6 @@ class ShaderGeneratorUI {
         });
     }
 
-    /* @tweakable setup selection limiting for effects and controls */
     setupSelectionLimiting(modal) {
         // Reset selection order when opening a new form
         this.effectSelectionOrder = [];
@@ -153,7 +145,6 @@ class ShaderGeneratorUI {
         });
     }
     
-    /* @tweakable handle effect selection change to track order and update indicators */
     handleEffectSelectionChange(modal, checkbox) {
         const effectId = checkbox.id.replace('effect-', '');
         
@@ -174,7 +165,6 @@ class ShaderGeneratorUI {
         this.updateOrderIndicators(modal);
     }
     
-    /* @tweakable update visual order indicators on effect options */
     updateOrderIndicators(modal) {
         // Clear all indicators first
         const indicators = modal.querySelectorAll('.effect-order-indicator');
@@ -193,7 +183,6 @@ class ShaderGeneratorUI {
         });
     }
 
-    /* @tweakable generic selection limiting method for form options */
     limitSelection(modal, selector, maxCount) {
         const checked = modal.querySelectorAll(`${selector}:checked`);
         const all = modal.querySelectorAll(selector);
@@ -213,7 +202,6 @@ class ShaderGeneratorUI {
         }
     }
 
-    /* @tweakable collect form data from user selections */
     collectFormData(modal) {
         const name = modal.querySelector('#shader-name').value.trim();
         const palette = modal.querySelector('#color-palette').value;
@@ -242,7 +230,6 @@ class ShaderGeneratorUI {
         return { name, palette, effects: selectedEffects, controls: selectedControls };
     }
 
-    /* @tweakable update the variant overlay display */
     updateVariantOverlay(modal, effects) {
         const variantOverlay = modal.querySelector('#variant-overlay');
         const variantList = modal.querySelector('#variant-list');
@@ -268,7 +255,6 @@ class ShaderGeneratorUI {
         variantOverlay.style.display = 'block';
     }
 
-    /* @tweakable handle preview button functionality */
     handlePreview(modal) {
         const shaderData = this.collectFormData(modal);
         
@@ -287,7 +273,6 @@ class ShaderGeneratorUI {
         this.shaderGenerator.previewShader(shaderData, modal);
     }
 
-    /* @tweakable handle generate button functionality */
     handleGenerate(modal) {
         const shaderData = this.collectFormData(modal);
 
@@ -300,7 +285,6 @@ class ShaderGeneratorUI {
         this.closeForm(modal);
     }
 
-    /* @tweakable close form with smooth animation */
     closeForm(modal) {
         modal.style.opacity = '0';
         modal.querySelector('.generator-form').style.transform = 'scale(0.9)';
@@ -315,7 +299,6 @@ class ShaderGeneratorUI {
         }, this.animationDuration);
     }
     
-    /* @tweakable show the preview panel */
     showPreviewPanel(modal) {
         const previewPanel = modal.querySelector('#preview-panel');
         if (previewPanel) {
@@ -326,7 +309,6 @@ class ShaderGeneratorUI {
         }
     }
     
-    /* @tweakable close the preview panel */
     closePreview(modal) {
         const previewPanel = modal.querySelector('#preview-panel');
         if (previewPanel) {

@@ -1,4 +1,3 @@
-/* @tweakable control parameter definitions for shader generation interface */
 class ShaderGeneratorControls {
     static MAX_SHADER_CONTROLS = 5;
 

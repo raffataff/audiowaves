@@ -1,13 +1,9 @@
-/* @tweakable thumbnail capture quality from 0.1 to 1.0 */
 const THUMBNAIL_QUALITY = 0.8;
 
-/* @tweakable thumbnail dimensions in pixels */
 const THUMBNAIL_SIZE = 100;
 
-/* @tweakable delay before capture to allow rendering to complete */
 const CAPTURE_DELAY = 16;
 
-/* @tweakable number of frames to wait for stable rendering */
 const FRAME_STABILIZATION = 3;
 
 class ThumbnailCapture {
@@ -32,7 +28,6 @@ class ThumbnailCapture {
 
             const canvas = document.getElementById('visualizer-canvas');
 
-            /* @tweakable whether to preserve canvas drawing buffer for capture */
             const preserveDrawingBuffer = true;
 
             // Get WebGL context to read pixels directly
@@ -81,10 +76,8 @@ class ThumbnailCapture {
                 this.presetManager.shaderPresets[this.presetManager.currentPreset].thumbnail = thumbnailDataURL;
                 this.presetManager.render();
 
-                /* @tweakable immediate save after thumbnail capture to ensure persistence */
                 this.presetManager.saveState();
 
-                /* @tweakable success notification duration in milliseconds */
                 const notificationDuration = 2000;
                 this.notifications.showThumbnailCaptureNotification(notificationDuration);
             }
@@ -93,7 +86,6 @@ class ThumbnailCapture {
         requestAnimationFrame(waitForStableFrame);
     }
 
-    /* @tweakable thumbnail capture progress indicator styling */
     showThumbnailCaptureProgress() {
         const notification = document.createElement('div');
         notification.id = 'capture-progress';
