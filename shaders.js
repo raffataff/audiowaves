@@ -9,7 +9,7 @@ class ShaderDefinitions {
         'neural-network.js',
         'plasma-storm.js',
         'geometric-tunnel.js',
-        'frida.js'
+        'frida.js',
     ];
 
     static filenameToClassName(filename) {

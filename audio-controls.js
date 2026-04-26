@@ -44,6 +44,18 @@ class AudioControls {
         this._boundHandlers.tabAudio = () => this.toggleTabAudio();
         document.getElementById('tab-audio-btn').addEventListener('click', this._boundHandlers.tabAudio);
 
+        // Device selector
+        this._boundHandlers.toggleDeviceDropdown = () => this.toggleDeviceDropdown();
+        document.getElementById('mic-device-btn').addEventListener('click', this._boundHandlers.toggleDeviceDropdown);
+        
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('mic-device-dropdown');
+            const btn = document.getElementById('mic-device-btn');
+            if (!dropdown.contains(e.target) && e.target !== btn && !dropdown.classList.contains('hidden')) {
+                this.closeDeviceDropdown();
+            }
+        });
+
         // Audio events for progress updates
         this._boundHandlers.updateProgress = () => this.updateProgress();
         this.audioEngine.audioPlayer1.addEventListener('timeupdate', this._boundHandlers.updateProgress);
@@ -128,8 +140,10 @@ class AudioControls {
 
     async toggleMicrophone() {
         try {
-            await this.audioEngine.connectMicrophone();
-            document.getElementById('mic-input-btn').classList.add('active');
+            const success = await this.audioEngine.connectMicrophone();
+            if (success) {
+                document.getElementById('mic-input-btn').classList.add('active');
+            }
         } catch (error) {
             console.error('Microphone access denied:', error);
             alert('Microphone access denied. Please check permissions.');
@@ -146,6 +160,131 @@ class AudioControls {
             const success = await this.audioEngine.connectTabAudio();
             if (success) {
                 tabAudioBtn.classList.add('active');
+            }
+        }
+    }
+
+    async toggleDeviceDropdown() {
+        const dropdown = document.getElementById('mic-device-dropdown');
+        const btn = document.getElementById('mic-device-btn');
+        
+        if (dropdown.classList.contains('hidden')) {
+            btn.classList.add('active');
+            dropdown.classList.remove('hidden');
+            
+            const btnRect = btn.getBoundingClientRect();
+            dropdown.style.top = (btnRect.bottom + 8) + 'px';
+            dropdown.style.left = btnRect.left + 'px';
+            
+            await this.populateDeviceList();
+        } else {
+            this.closeDeviceDropdown();
+        }
+    }
+
+    closeDeviceDropdown() {
+        document.getElementById('mic-device-dropdown').classList.add('hidden');
+        document.getElementById('mic-device-btn').classList.remove('active');
+    }
+
+    async populateDeviceList() {
+        const deviceList = document.getElementById('mic-device-list');
+        deviceList.innerHTML = '';
+        
+        const devices = await this.audioEngine.enumerateAudioDevices();
+        
+        if (devices.length === 0) {
+            deviceList.innerHTML = '<div class="mic-device-empty">No audio input devices found</div>';
+            return;
+        }
+        
+        const selectedDeviceId = this.audioEngine.selectedDeviceId || this.audioEngine.loadSelectedDevice();
+        
+        const defaultItem = this.createDeviceItem({
+            deviceId: null,
+            label: 'Default Device',
+            isLoopback: false,
+            type: 'default'
+        }, !selectedDeviceId);
+        deviceList.appendChild(defaultItem);
+        
+        devices.forEach(device => {
+            const isSelected = device.deviceId === selectedDeviceId;
+            const item = this.createDeviceItem(device, isSelected);
+            deviceList.appendChild(item);
+        });
+        
+        const refreshBtn = document.createElement('div');
+        refreshBtn.className = 'mic-device-refresh';
+        refreshBtn.innerHTML = '<span>🔄</span><span>Refresh Devices</span>';
+        refreshBtn.addEventListener('click', async () => {
+            await this.populateDeviceList();
+        });
+        deviceList.appendChild(refreshBtn);
+    }
+
+    createDeviceItem(device, isSelected) {
+        const item = document.createElement('div');
+        item.className = 'mic-device-item' + (isSelected ? ' selected' : '');
+        
+        const icon = document.createElement('span');
+        icon.className = 'mic-device-icon';
+        icon.textContent = device.isLoopback ? '🔊' : '🎤';
+        
+        const name = document.createElement('span');
+        name.className = 'mic-device-name';
+        name.textContent = device.label;
+        
+        if (device.type !== 'default') {
+            const type = document.createElement('span');
+            type.className = 'mic-device-type' + (device.isLoopback ? ' loopback' : '');
+            type.textContent = device.type;
+            item.appendChild(icon);
+            item.appendChild(name);
+            item.appendChild(type);
+        } else {
+            item.appendChild(icon);
+            item.appendChild(name);
+        }
+        
+        item.addEventListener('click', async (e) => {
+            await this.selectDevice(device.deviceId, e.currentTarget);
+            this.closeDeviceDropdown();
+        });
+        
+        return item;
+    }
+
+    async selectDevice(deviceId, itemElement) {
+        this.audioEngine.setSelectedDevice(deviceId);
+        
+        const deviceList = document.getElementById('mic-device-list');
+        const items = deviceList.querySelectorAll('.mic-device-item');
+        items.forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        if (itemElement) {
+            itemElement.classList.add('selected');
+        }
+        
+        if (this.audioEngine.externalInputType) {
+            const currentType = this.audioEngine.externalInputType;
+            this.audioEngine.disconnectExternalInput();
+            
+            document.getElementById('mic-input-btn').classList.remove('active');
+            document.getElementById('tab-audio-btn').classList.remove('active');
+            
+            if (currentType === 'microphone') {
+                const success = await this.audioEngine.connectMicrophone(deviceId);
+                if (success) {
+                    document.getElementById('mic-input-btn').classList.add('active');
+                }
+            } else if (currentType === 'loopback') {
+                const success = await this.audioEngine.connectSystemLoopback(deviceId);
+                if (success) {
+                    document.getElementById('mic-input-btn').classList.add('active');
+                }
             }
         }
     }
@@ -184,6 +323,12 @@ class AudioControls {
 
                 this.audioEngine.setVolume(this.isMuted ? 0 : this.volume);
             }
+            
+            const savedDevice = this.audioEngine.loadSelectedDevice();
+            if (savedDevice) {
+                this.audioEngine.selectedDeviceId = savedDevice;
+                console.log('Loaded saved audio device:', savedDevice);
+            }
         } catch (error) {
             console.error('Error loading audio state:', error);
         }
@@ -201,6 +346,7 @@ class AudioControls {
         const progressSlider = document.getElementById('progress-slider');
         const micBtn = document.getElementById('mic-input-btn');
         const tabAudioBtn = document.getElementById('tab-audio-btn');
+        const micDeviceBtn = document.getElementById('mic-device-btn');
 
         if (playPauseBtn && this._boundHandlers.playPause) {
             playPauseBtn.removeEventListener('click', this._boundHandlers.playPause);
@@ -231,6 +377,9 @@ class AudioControls {
         }
         if (tabAudioBtn && this._boundHandlers.tabAudio) {
             tabAudioBtn.removeEventListener('click', this._boundHandlers.tabAudio);
+        }
+        if (micDeviceBtn && this._boundHandlers.toggleDeviceDropdown) {
+            micDeviceBtn.removeEventListener('click', this._boundHandlers.toggleDeviceDropdown);
         }
         
         // Remove audio player event listeners

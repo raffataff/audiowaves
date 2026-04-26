@@ -101,6 +101,7 @@
                         <button id="add-files-btn" class="icon-btn" data-tooltip="Add audio files">📁</button>
                         <button id="tab-audio-btn" class="icon-btn" data-tooltip="Capture audio from other tabs/windows">🖥️</button>
                         <button id="mic-input-btn" class="icon-btn" data-tooltip="Use microphone input">🎤</button>
+                        <button id="mic-device-btn" class="icon-btn mic-device-btn" data-tooltip="Select audio input device">🔽</button>
                         <button id="clear-playlist-btn" class="icon-btn" data-tooltip="Clear playlist">🗑️</button>
                     </div>
                 </div>
@@ -148,6 +149,12 @@
                     <div class="preset-params" id="preset-params"></div>
                 </div>
             </div>
+        </div>
+        
+        <!-- Device Selector Dropdown (outside panel to avoid overflow clipping) -->
+        <div id="mic-device-dropdown" class="mic-device-dropdown hidden">
+            <div class="dropdown-header">Select Audio Input</div>
+            <div id="mic-device-list" class="mic-device-list"></div>
         </div>
         
         <!-- Drop Zone Overlay -->

@@ -35,6 +35,7 @@ class AudioEngine {
         
         this.externalInputSource = null;
         this.externalInputType = null;
+        this.selectedDeviceId = null;
         
         this.setupAudioPlayers();
     }
@@ -136,21 +137,43 @@ class AudioEngine {
         }
     }
     
-    async connectMicrophone() {
+    async connectMicrophone(deviceId = null) {
         if (!this.isInitialized) await this.initialize();
         
         this.disconnectExternalInput();
         
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const constraints = {
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false
+                }
+            };
+            
+            const targetDeviceId = deviceId || this.selectedDeviceId;
+            if (targetDeviceId) {
+                constraints.audio.deviceId = { exact: targetDeviceId };
+            }
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
             
             this.externalInputSource = this.audioContext.createMediaStreamSource(stream);
             this.externalInputSource.connect(this.gainNode);
             this.externalInputType = 'microphone';
             
-            console.log('Microphone connected');
+            stream.getAudioTracks().forEach(track => {
+                track.onended = () => {
+                    this.disconnectExternalInput();
+                    console.log('Microphone disconnected');
+                };
+            });
+            
+            console.log('Microphone connected', targetDeviceId ? `with device ID: ${targetDeviceId}` : '(default)');
+            return true;
         } catch (error) {
             console.error('Failed to connect microphone:', error);
+            return false;
         }
     }
     
@@ -199,13 +222,10 @@ class AudioEngine {
         }
     }
     
-    async connectSystemLoopback() {
+    async connectSystemLoopback(deviceId = null) {
         this.disconnectExternalInput();
         
         try {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const audioInputs = devices.filter(d => d.kind === 'audioinput');
-            
             const constraints = {
                 audio: {
                     echoCancellation: false,
@@ -214,19 +234,28 @@ class AudioEngine {
                 }
             };
             
-            const loopbackDevice = audioInputs.find(d => {
-                const label = d.label.toLowerCase();
-                return label.includes('stereo mix') || 
-                       label.includes('wave out') || 
-                       label.includes('loopback') ||
-                       label.includes('what you hear') ||
-                       label.includes('mix') ||
-                       label.includes('virtual') ||
-                       label.includes('cable');
-            });
+            const targetDeviceId = deviceId || this.selectedDeviceId;
             
-            if (loopbackDevice) {
-                constraints.audio.deviceId = loopbackDevice.deviceId;
+            if (targetDeviceId) {
+                constraints.audio.deviceId = { exact: targetDeviceId };
+            } else {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const audioInputs = devices.filter(d => d.kind === 'audioinput');
+                
+                const loopbackDevice = audioInputs.find(d => {
+                    const label = d.label.toLowerCase();
+                    return label.includes('stereo mix') || 
+                           label.includes('wave out') || 
+                           label.includes('loopback') ||
+                           label.includes('what you hear') ||
+                           label.includes('mix') ||
+                           label.includes('virtual') ||
+                           label.includes('cable');
+                });
+                
+                if (loopbackDevice) {
+                    constraints.audio.deviceId = loopbackDevice.deviceId;
+                }
             }
             
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -251,6 +280,47 @@ class AudioEngine {
     
     disconnectTabAudio() {
         this.disconnectExternalInput();
+    }
+    
+    async enumerateAudioDevices() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const audioInputs = devices.filter(d => d.kind === 'audioinput');
+            
+            return audioInputs.map(device => {
+                const label = device.label || `Input ${device.deviceId.slice(0, 8)}...`;
+                const isLoopback = label.toLowerCase().includes('stereo mix') || 
+                                   label.toLowerCase().includes('wave out') || 
+                                   label.toLowerCase().includes('loopback') ||
+                                   label.toLowerCase().includes('what you hear') ||
+                                   label.toLowerCase().includes('mix') ||
+                                   label.toLowerCase().includes('virtual') ||
+                                   label.toLowerCase().includes('cable');
+                
+                return {
+                    deviceId: device.deviceId,
+                    label: label,
+                    isLoopback: isLoopback,
+                    type: isLoopback ? 'loopback' : 'microphone'
+                };
+            });
+        } catch (error) {
+            console.error('Failed to enumerate audio devices:', error);
+            return [];
+        }
+    }
+    
+    setSelectedDevice(deviceId) {
+        this.selectedDeviceId = deviceId;
+        if (deviceId) {
+            localStorage.setItem('audiowaves-selected-device', deviceId);
+        } else {
+            localStorage.removeItem('audiowaves-selected-device');
+        }
+    }
+    
+    loadSelectedDevice() {
+        return localStorage.getItem('audiowaves-selected-device');
     }
     
     update() {
