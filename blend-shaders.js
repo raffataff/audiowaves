@@ -8,49 +8,57 @@ class BlendShaders {
             {
                 id: 'luma_flow',
                 name: 'Luma Flow',
+                durationHint: 4200,
                 params: { threshold: 0.1, softness: 0.4, flow: 1.0 },
                 blendFunction: this.getLumaFlowBlend()
             },
             {
                 id: 'exposure',
                 name: 'Exposure Flash',
+                durationHint: 2700,
                 params: { intensity: 1.0, colorize: 0.50, zoom: 0.4 },
                 blendFunction: this.getExposureBlend()
             },
             {
                 id: 'liquid',
                 name: 'Liquid Morph',
+                durationHint: 4500,
                 params: { scale: 5.0, power: 0.5, speed: 1.0 },
                 blendFunction: this.getLiquidBlend()
             },
             {
                 id: 'glitch',
                 name: 'Data Glitch',
+                durationHint: 2250,
                 params: { blockSize: 15.0, jitter: 0.5, colorSplit: 0.05 },
                 blendFunction: this.getGlitchBlend()
             },
             {
                 id: 'warp',
                 name: 'Chromatic Warp',
+                durationHint: 3300,
                 params: { strength: 2.0, aberration: 0.1, rotation: 1.0 },
                 blendFunction: this.getWarpBlend()
             },
             {
                 id: 'melt',
                 name: 'Pixel Melter',
+                durationHint: 3000,
                 params: { dripSpeed: 2.0, segments: 50.0, threshold: 0.5 },
                 blendFunction: this.getMeltBlend()
             },
             {
                 id: 'kaleido',
                 name: 'Kaleido-Morph',
+                durationHint: 3600,
                 params: { segments: 6.0, spin: 2.0, zoom: 1.5 },
                 blendFunction: this.getKaleidoBlend()
             },
             {
                 id: 'burn',
                 name: 'Burn Through',
-                params: { noiseScale: 8.0, edgeWidth: 0.1, intensity: 2.0 },
+                durationHint: 3000,
+                params: { noiseScale: 8.0, edgeWidth: 0.2, intensity: 2.0 },
                 blendFunction: this.getBurnBlend()
             }
         ];
@@ -105,16 +113,16 @@ void main() {
     vec2 uv = gl_FragCoord.xy / u_resolution;
 
     // --- AUDIO REACTIVE TRANSITION PHYSICS ---
-    if (u_bass > 0.7) {
-        float shake = (u_bass - 0.5) * 0.02 * sin(u_transitionProgress * 3.14159);
-        uv += vec2(random(uv + u_time) - 0.5) * shake;
-    }
+    float audioIntensity = smoothstep(0.3, 0.8, u_bass);
+    float shake = audioIntensity * 0.025 * sin(u_transitionProgress * 3.14159);
+    uv += vec2(random(uv + u_time) - 0.5) * shake;
 
     vec4 blendedColor = blendColors(u_transitionProgress, uv);
 
     // --- DRIVER INTENSITY ---
     float midTransition = 1.0 - abs(u_transitionProgress * 2.0 - 1.0);
-    blendedColor.rgb += midTransition * u_beat * 0.15;
+    float beatBoost = u_beat * smoothstep(0.4, 0.9, u_beat);
+    blendedColor.rgb += midTransition * beatBoost * 0.12;
 
     fragColor = blendedColor;
 }`;
@@ -210,10 +218,10 @@ vec4 blendColors(float progress, vec2 uv) {
 
     // Add burn edge
     float edge = 1.0 - abs(mask - 0.5) * 2.0;
-    edge = pow(edge, 5.0);
+    edge = pow(edge, 2.5);
     
     vec4 result = mix(colFrom, colTo, mask);
-    result.rgb += vec3(1.0, 0.8, 0.5) * edge * u_blendParam1; 
+    result.rgb += vec3(1.0, 0.8, 0.5) * edge * u_blendParam1 * 0.5; 
     
     return result;
 }`;
@@ -228,7 +236,7 @@ vec4 blendColors(float progress, vec2 uv) {
     vec2 zoomedUV = (uv - center) * (1.0 - peak * u_blendParam3) + center;
     vec4 colFrom = getShaderColor_from(zoomedUV);
     vec4 colTo = getShaderColor_to(zoomedUV);
-    vec4 baseColor = progress < 0.5 ? colFrom : colTo;
+    vec4 baseColor = mix(colFrom, colTo, smoothstep(0.3, 0.7, progress));
     vec3 flash = vec3(1.0) * peak * intensity;
     return baseColor + vec4(flash, 0.0);
 }`; }
@@ -266,7 +274,7 @@ vec4 blendColors(float progress, vec2 uv) {
     vec4 toG = getShaderColor_to(uvG);
     vec4 toB = getShaderColor_to(uvB);
     vec4 colTo = vec4(toR.r, toG.g, toB.b, 1.0);
-    float cut = step(progress, random(vec2(uv.y * 10.0, u_time)));
+    float cut = smoothstep(progress - 0.15, progress + 0.15, random(vec2(uv.y * 10.0, u_time)));
     return mix(colTo, colFrom, cut);
 }`; }
 
@@ -306,13 +314,13 @@ vec4 blendColors(float progress, vec2 uv) {
     vec2 uvTo = uv - vec2(0.0, drip * (1.0 - progress));
     vec4 colFrom = getShaderColor_from(uvFrom);
     vec4 colTo = getShaderColor_to(uvTo);
-    float mixVal = smoothstep(0.4, 0.6, progress + (noise(uv*10.0) - 0.5) * 0.5);
+    float mixVal = smoothstep(0.1, 0.9, progress + (noise(uv*10.0) - 0.5) * 0.6);
     return mix(colFrom, colTo, mixVal);
 }`; }
 
     static getKaleidoBlend() { return `
 vec4 blendColors(float progress, vec2 uv) {
-    float intensity = sin(progress * 3.14159);
+    float intensity = pow(sin(progress * 3.14159), 0.7);
     vec2 p = uv - 0.5;
     float r = length(p);
     float a = atan(p.y, p.x);
@@ -335,7 +343,8 @@ vec4 blendColors(float progress, vec2 uv) {
     n += noise(uv * noiseScale * 2.0 - u_time * 0.2) * 0.5;
     n /= 1.5;
     float burnPath = progress * 1.5 - 0.25;
-    float mask = smoothstep(burnPath - 0.05, burnPath, n);
+    float edgeWidth = max(0.03, u_blendParam2 * 0.5);
+    float mask = smoothstep(burnPath - edgeWidth, burnPath, n);
     vec4 colFrom = getShaderColor_from(uv);
     vec4 colTo = getShaderColor_to(uv);
     vec3 fireColor = vec3(1.0, 0.5, 0.1) * u_blendParam3;
@@ -402,8 +411,19 @@ float getFreq(float f) {
 
     static getRandomBlendMode() {
         const blendModes = this.getBlendModes();
-        const randomIndex = Math.floor(Math.random() * blendModes.length);
-        return blendModes[randomIndex];
+        const weights = blendModes.map(m => {
+            if (['luma_flow', 'liquid'].includes(m.id)) return 2.0;
+            if (m.id === 'glitch') return 0.6;
+            if (m.id === 'burn') return 0.7;
+            return 1.0;
+        });
+        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+        let roll = Math.random() * totalWeight;
+        for (let i = 0; i < blendModes.length; i++) {
+            roll -= weights[i];
+            if (roll <= 0) return blendModes[i];
+        }
+        return blendModes[blendModes.length - 1];
     }
 
     static randomizeBlendParams(blendMode) {

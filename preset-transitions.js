@@ -1,3 +1,9 @@
+const SIMPLE_VERTEX_SHADER = `#version 300 es
+    in vec4 a_position;
+    void main() {
+        gl_Position = a_position;
+    }`;
+
 class PresetTransitions {
     constructor(presetManager) {
         this.presetManager = presetManager;
@@ -11,6 +17,13 @@ class PresetTransitions {
         this.transitionAnimationId = null;
         this.targetPresetIndex = -1;
 
+        this.holdFrames = 0;
+        this.holdMaxFrames = 12;
+
+        this.pendingTargetShader = null;
+        this.pendingTargetParams = null;
+        this.precompiledTarget = null;
+
         // NEW: Cache for generated transition source code to prevent frame drops
         this.shaderCache = new Map();
     }
@@ -22,8 +35,19 @@ class PresetTransitions {
         this.transitionProgress = 0.0;
         this.transitionStartTime = Date.now();
         this.targetPresetIndex = toIndex;
+        this.holdFrames = 0;
+
+        const toPreset = this.presetManager.shaderPresets[toIndex];
+        this.pendingTargetShader = toPreset.fragmentShader;
+        this.pendingTargetParams = { ...toPreset.params };
+
+        this.precompiledTarget = this.presetManager.shaderEngine.precompileShader(
+            SIMPLE_VERTEX_SHADER,
+            this.pendingTargetShader
+        );
         
         this.currentBlendMode = BlendShaders.getRandomBlendMode();
+        this.transitionDuration = this.currentBlendMode.durationHint || DEFAULT_TRANSITION_DURATION;
         const randomizedParams = BlendShaders.randomizeBlendParams(this.currentBlendMode);
         
         this.blendParams = {
@@ -70,11 +94,7 @@ class PresetTransitions {
             this.shaderCache.set(cacheKey, transitionShaderSource);
         }
         
-        const vertexShader = `#version 300 es
-            in vec4 a_position;
-            void main() {
-                gl_Position = a_position;
-            }`;
+        const vertexShader = SIMPLE_VERTEX_SHADER;
         
         const result = this.presetManager.shaderEngine.loadShader(vertexShader, transitionShaderSource);
         
@@ -93,7 +113,10 @@ class PresetTransitions {
         
         const now = Date.now();
         const elapsed = now - this.transitionStartTime;
-        this.transitionProgress = Math.min(elapsed / this.transitionDuration, 1.0);
+        const raw = Math.min(elapsed / this.transitionDuration, 1.0);
+        this.transitionProgress = raw < 0.5
+            ? 4.0 * raw * raw * raw
+            : 1.0 - Math.pow(-2.0 * raw + 2.0, 3.0) / 2.0;
         
         const gl = this.presetManager.shaderEngine.gl;
         if (gl && this.presetManager.shaderEngine.program) {
@@ -111,6 +134,11 @@ class PresetTransitions {
         }
         
         if (this.transitionProgress >= 1.0) {
+            if (this.holdFrames < this.holdMaxFrames) {
+                this.holdFrames++;
+                this.transitionAnimationId = requestAnimationFrame(() => this.updateTransition());
+                return;
+            }
             this.completeTransition();
         } else {
             this.transitionAnimationId = requestAnimationFrame(() => this.updateTransition());
@@ -119,6 +147,7 @@ class PresetTransitions {
 
     completeTransition() {
         this.isTransitioning = false;
+        this.holdFrames = 0;
         
         if (this.transitionAnimationId) {
             cancelAnimationFrame(this.transitionAnimationId);
@@ -128,15 +157,25 @@ class PresetTransitions {
         this.presetManager.currentPreset = this.targetPresetIndex;
         this.targetPresetIndex = -1;
         
-        const preset = this.presetManager.shaderPresets[this.presetManager.currentPreset];
-        this.presetManager.loadPresetShader(preset);
+        const usePrecompiled = this.precompiledTarget &&
+            this.presetManager.shaderEngine.activatePrecompiledProgram(this.precompiledTarget);
         
-        setTimeout(() => {
-            this.presetManager.shaderEngine.setPresetParams(preset.params);
-        }, 50);
+        if (!usePrecompiled && this.pendingTargetShader) {
+            this.presetManager.shaderEngine.loadShader(SIMPLE_VERTEX_SHADER, this.pendingTargetShader);
+        }
+        
+        if (this.pendingTargetParams) {
+            this.presetManager.shaderEngine.setPresetParams(this.pendingTargetParams);
+        }
+        
+        this.pendingTargetShader = null;
+        this.pendingTargetParams = null;
+        this.precompiledTarget = null;
         
         this.presetManager.render();
         this.presetManager.saveState();
+        
+        const preset = this.presetManager.shaderPresets[this.presetManager.currentPreset];
         
         // Notify shader editor if it exists
         if (window.spectralNexus && window.spectralNexus.uiManager && 

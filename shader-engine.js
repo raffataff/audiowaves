@@ -429,6 +429,61 @@ class ShaderEngine {
             return { success: false, error: error.message };
         }
     }
+
+    precompileShader(vertexSource, fragmentSource) {
+        const ext = this.gl.getExtension('KHR_parallel_shader_compile');
+        if (!ext) return null;
+
+        const gl = this.gl;
+
+        const vs = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vs, vertexSource);
+        gl.compileShader(vs);
+
+        const fs = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fs, fragmentSource);
+        gl.compileShader(fs);
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+
+        return { program, vs, fs, ext };
+    }
+
+    activatePrecompiledProgram(precompiled) {
+        if (!precompiled) return false;
+
+        const gl = this.gl;
+        const { program, vs, fs, ext } = precompiled;
+
+        if (ext) {
+            const complete = gl.getProgramParameter(program, ext.COMPLETION_STATUS_KHR);
+            if (!complete) {
+                gl.getProgramInfoLog(program);
+            }
+        }
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            gl.deleteProgram(program);
+            gl.deleteShader(vs);
+            gl.deleteShader(fs);
+            return false;
+        }
+
+        gl.deleteShader(vs);
+        gl.deleteShader(fs);
+
+        if (this.program) {
+            gl.deleteProgram(this.program);
+        }
+
+        this.program = program;
+        this.setupUniforms();
+        this.setupGeometry();
+        return true;
+    }
     
     adjustQuality() {
         if (this.fps < this.targetFPS && this.renderScale > 0.5) {
